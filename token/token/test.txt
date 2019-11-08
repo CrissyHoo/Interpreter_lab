@@ -1,0 +1,151 @@
+   12.6
+   0.3
+   0123456789
+   -20.000
+   -02346
+   +23476
+   +0234
+   0239.120
+   // error form
+   0.0.2.2.5
+   23.-3
+   .34  // may regard as right form ~
+   0x123 // may regard as right form ~
+   123..
+   4..3245
+   234e-3 // may regard as right from ~
+   23.    // may regard as right form ~
+   234_234   // may regard as right form in JAVA
+
+
+
+// PART THREE: basic sign detection
+   // right form
+   ;
+   <
+   >
+   ==
+   <>
+   >=	// expected to implement
+   <= 	// expected to implement
+   &&	// expected to implement
+   || 	// expected to implement   
+
+
+   (
+   }
+   )
+   [
+   }
+   ]
+   =
+   '	// expected to implement
+   "	// expected to implement
+   \n	// expected to implement
+   \r	// expected to implement
+   \t	// expected to implement
+
+   /
+   +
+   -
+   *
+   // wrong form
+   @
+   #
+   $
+   ^
+   **   // may regard as right form in python
+   --   // may regard as right form
+   \
+   !    // may regard as right form in Java
+   ,	// may regard as right form
+
+
+
+// PART FOUR: basic identifier dectection
+   // right form
+   asdf
+   1DSF3
+   DSF
+   SD2DF23as23s
+   a________3
+   s0_234_4_23ss
+   zxcvbnmlkjhggfdsapoiuytrewqqwertyuiopasdfghjklmnbvcxzzxcvbnmasdfghjklqwertyuiop      // may be regard as wrong form due to the length limit(64) of variable name.
+   no2nOFN23
+   // wrong form
+   _w234 // may regard as right form
+   _234
+   gfdff_
+   23asdfc
+   sdf23_____
+   3jk3n23kl3n4nl6
+
+
+// PART FIVE: basic keyword detection
+   // type
+   int
+   real         // depend on yourself
+   char         // expect to implement
+
+   // structure
+   while
+   for
+   break        // expect to implement
+   continue	// expect to implement
+   if
+   else
+
+   // input,output is REQUIRED in PPT
+   print        // depend on yourself
+   scan         // depend on yourself
+
+  // you may treat the below as reserved word or identifier
+   define	// may regard as right form
+   goto	 	// may regard as right form
+   switch	// may regard as right form
+   include	// may regard as right form
+   typedef	// may regard as right form
+
+
+
+// PART SIX: comprehensive analysis
+   // here are some code adapted from C which is completely lexically legal.
+   // piece one
+   int a[3];
+   a = 234;
+   b = sdf_234df
+
+   // piece two
+   {
+        int a = 3<>5;
+        real b=-23;
+	int a[3] = { 1,3,,b,nono }
+	else print    (b);
+        if( a>b){ print(a        );
+        }
+        {
+          236 * 1+ 345/(23 * 34) - 2346/ (31- 31) =xx
+          }
+   }
+
+   // piece three
+   {
+        int a scan(a);real b =0.234;
+	{
+	{	print(a_b_c_d_e____1) == 0126.120
+        while (a >+234){
+              b = b - 1 - a;
+              while( b )
+		{
+                    real c = 123;
+                    2343 
+		= b - 23;
+                    b = 
+		- 14.1238675;
+                    print(a)
+             }
+       }
+   }
+
+/* you should pass all the test case before you start expr1 checking !! */
+
