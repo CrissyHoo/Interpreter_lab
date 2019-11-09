@@ -1,6 +1,16 @@
 #include "lex.h"
 #include "Utilize.h"
+/*对grammar的注释
+S：开始符号
+A：句子
+B：block，模块，比如while板块，if板块
+D:int或者float
+I：ID
+N:一个数，整数或者浮点数
+L:later，后续，针对在定义时就已经赋值的情况
 
+*/
+//用#表示结束，用$表示空
 
 set<string> terminalSym; //定义终结符号集
 set<string> nonterminalSym;//定义非终结符号集
@@ -11,9 +21,11 @@ int productionSum;//产生式数目
 fstream grammarFile; //文法文件
 map<string, set<string>> firstSet;//存所有文法符号的first集合，注意map的用法
 map<int, set<string>> productionFirstSet;//存储所有产生式的first集合
-//map<string, set<string>> followSet;//存所有文法的follow集合
-//map<string, set<string>> selectSet;//存所有的select集合
+map<string, set<string>> followSet;//存所有文法的follow集合
+map<string, set<string>> selectSet;//存所有的select集合
 map<string, map<string, string>> predictionTable;//LL1的那个表，预测分析表
+fstream parseFile("parse.txt");//存放语法分析结果文件
+ofstream setFile("setFile.txt");//存放LL1分析表和各种集合表
 
 
 stack<string> anaStack;
@@ -55,7 +67,7 @@ void saveProduction(string grammarName) {
 
 		productions[productionSum - 1].nonTerminalSym = noneTerminalSymbol;//给productions赋值
 
-		list <string> perProRight = split(productionRight, " ");
+		list <string> perProRight = split(productionRight, " ");//将产生式右部划分成一个个的单个符号
 
 		//遍历这个list，然后把产生式部分加到这个全局里面存着，这里用了vector的pushback函数，pushback函数作用是在当前vector的尾部加上一个元素
 
@@ -64,7 +76,7 @@ void saveProduction(string grammarName) {
 		}
 
 		//将非终结符名存入非终结符集中
-		if (nonterminalSym.find(noneTerminalSymbol) == nonterminalSym.end()) {//一个都没找到
+		if (nonterminalSym.find(noneTerminalSymbol) == nonterminalSym.end()) {//没找到，所以就要加进去
 			nonterminalSym.insert(noneTerminalSymbol);
 		}
 		//默认文法第一个产生式左部为开始符
@@ -79,15 +91,18 @@ void saveProduction(string grammarName) {
 		//遍历所有的产生式右部，利用刚刚分割得到的数据
 		for (int j = 0; j < productions[i].genera.size(); j++) {
 			tmp = productions[i].genera[j];
-			if (terminalSym.find(tmp) == terminalSym.end() &&
-				nonterminalSym.find(tmp) == nonterminalSym.end()) {
+			if ((terminalSym.find(tmp) == terminalSym.end()) &&(
+				nonterminalSym.find(tmp) == nonterminalSym.end())) {
 				terminalSym.insert(tmp);
 			}
 		}
 
 	}
 	terminalSym.insert("#");
+	terminalSym.insert("$");    //空字
 
+	saveNoneTerminal(nonterminalSym, setFile);
+	saveTerminal(terminalSym, setFile);
 
 }
 
@@ -101,46 +116,138 @@ void getFirstSet() {
 	int preSize;
 	int curSize;//当前的size
 	bool changed;//这个变量用来检测是否对first集合做了改变
+
 	do {
 		changed = false;
-		for (int i = 0; i < productionSum; i++) {
-			preSize = firstSet[productions[i].nonTerminalSym].size();
+		for (int i = 0; i < productionSum; ++i) {  //对于每一个产生式
+			preSize = firstSet[productions[i].nonTerminalSym].size();   //某个非终结符对应的first集中元素个数（初始值应该为0）
+			bool shouldContinue = true;     //是否继续求此产生式的first集
 
-			//如果产生式右部的第一个元素是非终结符,就把右边那个元素的first集赋给这个元素的first集,是终结符的话也没事，上面已经赋过值了
-			for (set<string>::const_iterator it = firstSet[productions[i].genera[0]].cbegin(); it != firstSet[productions[i].genera[0]].cend(); it++) {
+			for (int j = 0; j < productions[i].genera.size() && shouldContinue; ++j) {  //遍历产生式右部的每个元素 S->ABc
+				
+				for (set<string>::const_iterator ite = firstSet[productions[i].genera[j]].cbegin(); 
+					ite != firstSet[productions[i].genera[j]].cend(); ite++) {         //获得产生式右部每个元素的first集中的元素，以A为例，先获得A的first集
+					
+					if (firstSet[productions[i].nonTerminalSym].find(*ite) ==firstSet[productions[i].nonTerminalSym].end() && *ite != "$") 
+					{
+						firstSet[productions[i].nonTerminalSym].insert(*ite);           //将A的first集元素都加到S的first集中,除了空字
+					}
 
-				firstSet[productions[i].nonTerminalSym].insert(*it);
+				}
+				if (firstSet[productions[i].genera[j]].find("$") ==
+					firstSet[productions[i].genera[j]].end()) {
+					shouldContinue = false;                                                 //如果A的first集中没有空字，则结束求此产生式的first集。否则继续对B操作
+				}
 			}
-
+			if (shouldContinue) firstSet[productions[i].nonTerminalSym].insert("$");//若最后一个元素的first集仍有空字，则将空字也加入此产生式左部非终结符的first集中
 			curSize = firstSet[productions[i].nonTerminalSym].size();
 			if (curSize > preSize) changed = true;
-
 		}
-	} while (changed);
-	//检查，输出所有非终结符号的first集
-	//for (map<string, set<string>>::iterator iter = firstSet.begin(); iter != firstSet.end(); iter++) {
-		//cout << iter->first << endl;
-		//for (set<string>::iterator it = iter->second.begin(); it != iter->second.end(); it++)
-		//{
-			//cout << *it << endl;
-		//}
-		//cout << endl;
-	//}
+	} while (changed);  //若first集改变了，则继续重复操作
+	//存到文件中，便于检查
+	saveFirst(firstSet, setFile);
 
 }
 
-/*说明：我的文法里面已经去除了空集，所以现在不需要求follow集合和select集了，
-复习一下select集的定义是等于first集，如果first集为空的话，就等于那个产生式左部元素的follow集
-所以下面一步是获取每个产生式的first集和构建预测分析表
-*/ 
+
 void getProductionFirstset() {
-	for (int i = 0; i < productionSum; i++) {
-		for (set<string>::const_iterator it = firstSet[productions[i].genera[0]].cbegin(); it != firstSet[productions[i].genera[0]].cend(); it++) {
-			//遍历每个产生式，将右部第一个元素的first集赋给对应产生式,因为已经消除空式了
-			productionFirstSet[i].insert(*it);
+	int i, j;
+	bool has$;
+
+	for (i = 0; i < productionSum; i++) {
+		has$ = true;
+		for (j = 0; j < productions[i].genera.size() && has$; j++) {    //遍历产生式右部，如S->ABc,先看first(A),并且包含有空集
+			for (set<string>::const_iterator ite = firstSet[productions[i].genera[j]].cbegin(); ite != firstSet[productions[i].genera[j]].cend(); ite++) 
+			{//遍历右部每个元素的first集？
+				if (*ite != "$") {
+					productionFirstSet[i].insert(*ite);
+				}
+			}
+
+			//如果当前符号的first中没有空字，则求产生式first集可以结束了
+			if (firstSet[productions[i].genera[j]].find("$") == firstSet[productions[i].genera[j]].end()) {
+				has$ = false;
+				break;
+			}
+		}
+		//如果遍历到产生式右部末尾，且最后一个符号的first集仍有空字，则迫不得已将空字也加入产生式的first集中，只有靠follow集了
+		if (j == productions[i].genera.size() && has$) {
+			productionFirstSet[i].insert("$");
 		}
 	}
+
+	//保存到文件中
+	saveProductionFirst(productionFirstSet, setFile);
 }
+
+//求所有非终结符的follow集合
+void buildFollowSet() {
+	followSet[startToken].insert("#");  //文法的开始符号的follow集中包含{#}
+	int preSize;    //非终结符之前的follow集元素个数
+	int curSize;    //非终结符现在的follow集元素个数
+	bool changed;   //非终结符的follow集是否改变
+	bool has$;  //是否有空字
+	int i, j, k;
+	int lastNoneTerminal = -1;   //产生式右部最后一个非终结符的位置
+
+	do {
+		changed = false;
+		for (i = 0; i < productionSum; ++i) {
+			for (j = 0; j < productions[i].generation.size(); ++j) {    //对于每条产生式x,如 A->aBβα
+				//如果x[j]是非终结符,即读到B，则求B的follow集
+				if (noneTerminalSymbols.find(productions[i].generation[j]) != noneTerminalSymbols.end()) {
+					preSize = followSet[productions[i].generation[j]].size();   //先求此时B的follow集元素个数
+					for (k = j + 1; k < productions[i].generation.size(); ++k) {  //遍历B之后的文法符号，即βα
+						has$ = false;
+						for (set<string>::const_iterator ite = firstSet[productions[i].generation[k]].cbegin();
+							ite != firstSet[productions[i].generation[k]].cend(); ite++) { //将first(β)的非空元素加入follow(B)中
+							if (*ite == "$") {
+								has$ = true;
+							}
+							else if (followSet[productions[i].generation[j]].find(*ite) ==
+								followSet[productions[i].generation[j]].end() && *ite != "$") {
+								followSet[productions[i].generation[j]].insert(*ite);
+							}
+						}
+						if (!has$) {    //如果first(β)不包含空字，则退出
+							break;
+						}
+					}   //继续遍历之后的文法符号
+					if (k == productions[i].generation.size() && has$) {    //如果读到产生式末尾，并且最后一个仍包含空字，则把follow(A)也加入follow(B)中
+						for (set<string>::const_iterator ite = followSet[productions[i].noneTerminalSymbol].cbegin();
+							ite != followSet[productions[i].noneTerminalSymbol].cend(); ite++) {
+							if (followSet[productions[i].generation[j]].find(*ite) ==
+								followSet[productions[i].generation[j]].end()) {
+								followSet[productions[i].generation[j]].insert(*ite);
+							}
+						}
+					}
+					curSize = followSet[productions[i].generation[j]].size();   //再求此时B的follow集元素个数
+					if (curSize > preSize) changed = true;
+
+					lastNoneTerminal = j;   //记录最后产生式最后一个非终结符的位置
+				}
+			}
+			if (lastNoneTerminal == j - 1) {    //如果产生式最后一个符号是非终结符，则该follow集将无法由上述步骤求出。因此直接将follow(A)加入该follow集中
+				for (set<string>::const_iterator ite = followSet[productions[i].noneTerminalSymbol].cbegin();
+					ite != followSet[productions[i].noneTerminalSymbol].cend(); ite++) {
+					if (followSet[productions[i].generation[lastNoneTerminal]].find(*ite) ==
+						followSet[productions[i].generation[lastNoneTerminal]].end()) {
+						followSet[productions[i].generation[lastNoneTerminal]].insert(*ite);
+					}
+				}
+				lastNoneTerminal = -1;      //重新恢复初始值
+			}
+			else {
+				lastNoneTerminal = -1;      //重新恢复初始值
+			}
+		}
+	} while (changed);  //若follow集改变了，则继续重复操作
+
+	//保存到文件中
+	saveFollow(followSet, set_file);
+}
+
 void getPredictTable() {
 	//预测表最好不要有重复，不然就会构成二义性,我们用一个map来存储
 	int i;
@@ -153,7 +260,8 @@ void getPredictTable() {
 		}
 	}
 
-
+	//存储
+	savePredictionTable(predictionTable, setFile);
 }
 
 //使用预测分析表进行语法分析

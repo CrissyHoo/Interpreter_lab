@@ -1,389 +1,13 @@
-1    12.6
-real number:12.6
-
-2    0.3
-real number:0.3
-
-3    0123456789
-integer:0123456789
-
-4    -20.000
-Operator: -
-real number:20.000
-
-5    -02346
-Operator: -
-integer:02346
-
-6    +23476
-Operator: +
-integer:23476
-
-7    +0234
-Operator: +
-integer:0234
-
-8    0239.120
-real number:0239.120
-
-9    // error form
+1 // PART SIX: comprehensive analysis
 line comment:/
 
-10    0.0.2.2.5
-real number:0.0
-ERROR token:.
-real number:2.2
-ERROR token:.
-
-11    23.-3
-integer:
-ERROR token:23.
-Operator: -
-
-12    .34  // may regard as right form ~
-integer:
-ERROR token:.
-integer:34
+2    // here are some code adapted from C which is completely lexically legal.
 line comment:/
 
-13    0x123 // may regard as right form ~
-integer:0
-Identifier: x123
+3    // piece one
 line comment:/
 
-14    123..
-ERROR token:123.
-ERROR token:.
-
-15    4..3245
-ERROR token:4.
-ERROR token:.
-integer:3245
-
-16    234e-3 // may regard as right from ~
-integer:234
-Identifier: e
-Operator: -
-integer:3
-line comment:/
-
-17    23.    // may regard as right form ~
-ERROR token:23.
-line comment:/
-
-18    234_234   // may regard as right form in JAVA
-integer:234
-ERROR token:_
-integer:234
-line comment:/
-
-19 
-
-20 
-
-21 
-
-22 // PART THREE: basic sign detection
-line comment:/
-
-23    // right form
-line comment:/
-
-24    ;
-Bound Symbol: ;
-
-25    <
-
-26    >
-Operator: 
-
-27    ==
-Operator: 
-
-28    <>
-Unknown Token:
-line comment:<
-
-29    >=	// expected to implement
-Operator: >
-line comment:/
-
-30    <= 	// expected to implement
-Operator: <
-line comment:/
-
-31    &&	// expected to implement
-ERROR token:&
-ERROR token:&
-line comment:/
-
-32    || 	// expected to implement   
-ERROR token:|
-ERROR token:|
-line comment:/
-
-33 
-
-34 
-
-35    (
-Bound Symbol: (
-
-36    }
-Bound Symbol: }
-
-37    )
-Bound Symbol: )
-
-38    [
-Bound Symbol: [
-
-39    }
-Bound Symbol: }
-
-40    ]
-Bound Symbol: ]
-
-41    =
-
-42    '	// expected to implement
-Operator: 
-ERROR token:'
-line comment:/
-
-43    "	// expected to implement
-ERROR token:"
-line comment:/
-
-44    \n	// expected to implement
-ERROR token:\
-Identifier: n
-line comment:/
-
-45    \r	// expected to implement
-ERROR token:\
-Identifier: r
-line comment:/
-
-46    \t	// expected to implement
-ERROR token:\
-Identifier: t
-line comment:/
-
-47 
-
-48    /
-
-49    +
-Operator: 
-
-50    -
-Operator: 
-
-51    *
-Operator: 
-
-52    // wrong form
-Operator: 
-line comment:/
-
-53    @
-ERROR token:@
-
-54    #
-ERROR token:#
-
-55    $
-ERROR token:$
-
-56    ^
-ERROR token:^
-
-57    **   // may regard as right form in python
-Operator: *
-Operator: *
-line comment:/
-
-58    --   // may regard as right form
-Operator: -
-Operator: -
-line comment:/
-
-59    \
-ERROR token:\
-
-60    !    // may regard as right form in Java
-ERROR token:!
-line comment:/
-
-61    ,	// may regard as right form
-Bound Symbol: ,
-line comment:/
-
-62 
-
-63 
-
-64 
-
-65 // PART FOUR: basic identifier dectection
-line comment:/
-
-66    // right form
-line comment:/
-
-67    asdf
-
-68    1DSF3
-Identifier: 
-integer:1
-
-69    DSF
-Identifier: 
-
-70    SD2DF23as23s
-Identifier: 
-
-71    a________3
-Identifier: 
-
-72    s0_234_4_23ss
-Identifier: 
-
-73    zxcvbnmlkjhggfdsapoiuytrewqqwertyuiopasdfghjklmnbvcxzzxcvbnmasdfghjklqwertyuiop      // may be regard as wrong form due to the length limit(64) of variable name.
-Identifier: 
-Identifier: zxcvbnmlkjhggfdsapoiuytrewqqwertyuiopasdfghjklmnbvcxzzxcvbnmasdfghjklqwertyuiop
-line comment:/
-
-74    no2nOFN23
-
-75    // wrong form
-Identifier: 
-line comment:/
-
-76    _w234 // may regard as right form
-ERROR token:_
-Identifier: w234
-line comment:/
-
-77    _234
-ERROR token:_
-integer:234
-
-78    gfdff_
-
-79    23asdfc
-Identifier: 
-integer:23
-
-80    sdf23_____
-Identifier: 
-
-81    3jk3n23kl3n4nl6
-Identifier: 
-integer:3
-
-82 
-
-83 
-
-84 // PART FIVE: basic keyword detection
-Identifier: 
-line comment:/
-
-85    // type
-line comment:/
-
-86    int
-
-87    real         // depend on yourself
-Identifier: 
-Identifier: real
-line comment:/
-
-88    char         // expect to implement
-Identifier: char
-line comment:/
-
-89 
-
-90    // structure
-line comment:/
-
-91    while
-
-92    for
-Identifier: 
-
-93    break        // expect to implement
-Identifier: 
-Identifier: break
-line comment:/
-
-94    continue	// expect to implement
-Identifier: continue
-line comment:/
-
-95    if
-
-96    else
-Identifier: 
-
-97 
-
-98    // input,output is REQUIRED in PPT
-Identifier: 
-line comment:/
-
-99    print        // depend on yourself
-Identifier: print
-line comment:/
-
-100    scan         // depend on yourself
-Identifier: scan
-line comment:/
-
-101 
-
-102   // you may treat the below as reserved word or identifier
-line comment:/
-
-103    define	// may regard as right form
-Identifier: define
-line comment:/
-
-104    goto	 	// may regard as right form
-Identifier: goto
-line comment:/
-
-105    switch	// may regard as right form
-Identifier: switch
-line comment:/
-
-106    include	// may regard as right form
-Identifier: include
-line comment:/
-
-107    typedef	// may regard as right form
-Identifier: typedef
-line comment:/
-
-108 
-
-109 
-
-110 
-
-111 // PART SIX: comprehensive analysis
-line comment:/
-
-112    // here are some code adapted from C which is completely lexically legal.
-line comment:/
-
-113    // piece one
-line comment:/
-
-114    int a[3];
+4    int a[3];
 Reserved Word: int
 Identifier: a
 Bound Symbol: [
@@ -391,35 +15,35 @@ integer:3
 Bound Symbol: ]
 Bound Symbol: ;
 
-115    a = 234;
+5    a = 234;
 Identifier: a
 Operator: =
 integer:234
 Bound Symbol: ;
 
-116    b = sdf_234df
+6    b = sdf_234df
 Identifier: b
 Operator: =
+Identifier: sdf_234df
 
-117 
+7 
 
-118    // piece two
-Identifier: 
+8    // piece two
 line comment:/
 
-119    {
+9    {
 Bound Symbol: {
 
-120         int a = 3<>5;
+10         int a = 3<>5;
 Reserved Word: int
 Identifier: a
 Operator: =
 integer:3
-Operator: <
+Operator: <>
 integer:5
 Bound Symbol: ;
 
-121         real b=-23;
+11         real b=-23;
 Identifier: real
 Identifier: b
 Operator: =
@@ -427,7 +51,7 @@ Operator: -
 integer:23
 Bound Symbol: ;
 
-122 	int a[3] = { 1,3,,b,nono }
+12 	int a[3] = { 1,3,,b,nono }
 Reserved Word: int
 Identifier: a
 Bound Symbol: [
@@ -445,34 +69,30 @@ Bound Symbol: ,
 Identifier: nono
 Bound Symbol: }
 
-123 	else print    (b);
+13 	else {b};
 Reserved Word: else
-Identifier: print
-Bound Symbol: (
+Bound Symbol: {
 Identifier: b
-Bound Symbol: )
+Bound Symbol: }
 Bound Symbol: ;
 
-124         if( a>b){ print(a        );
+14         if( a>b){ a        ;
 Reserved Word: if
 Bound Symbol: (
 Identifier: a
-Operator: >
+Operator: >b
 Bound Symbol: )
 Bound Symbol: {
-Identifier: print
-Bound Symbol: (
 Identifier: a
-Bound Symbol: )
 Bound Symbol: ;
 
-125         }
+15         }
 Bound Symbol: }
 
-126         {
+16         {
 Bound Symbol: {
 
-127           236 * 1+ 345/(23 * 34) - 2346/ (31- 31) =xx
+17           236 * 1+ 345/(23 * 34) - 2346/ (31- 31) =xx
 integer:236
 Operator: *
 integer:1
@@ -492,58 +112,51 @@ Operator: -
 integer:31
 Bound Symbol: )
 Operator: =
+Identifier: xx
 
-128           }
-Identifier: 
+18           }
 Bound Symbol: }
 
-129    }
+19    }
 Bound Symbol: }
 
-130 
+20 
 
-131    // piece three
+21    // piece three
 line comment:/
 
-132    {
+22    {
 Bound Symbol: {
 
-133         int a scan(a);real b =0.234;
+23         int a ;float b =0.234;
 Reserved Word: int
 Identifier: a
-Identifier: scan
-Bound Symbol: (
-Identifier: a
-Bound Symbol: )
 Bound Symbol: ;
-Identifier: real
+Reserved Word: float
 Identifier: b
 Operator: =
 real number:0.234
 Bound Symbol: ;
 
-134 	{
+24 	{
 Bound Symbol: {
 
-135 	{	print(a_b_c_d_e____1) == 0126.120
+25 	{	a_b_c_d_e____1== 0126.120
 Bound Symbol: {
-Identifier: print
-Bound Symbol: (
 Identifier: a_b_c_d_e____1
-Bound Symbol: )
 Operator: ==
 real number:0126.120
 
-136         while (a >+234){
+26         while (a >+234){
 Reserved Word: while
 Bound Symbol: (
 Identifier: a
-Operator: >
+Operator: >+
 integer:234
 Bound Symbol: )
 Bound Symbol: {
 
-137               b = b - 1 - a;
+27               b = b - 1 - a;
 Identifier: b
 Operator: =
 Identifier: b
@@ -553,60 +166,59 @@ Operator: -
 Identifier: a
 Bound Symbol: ;
 
-138               while( b )
+28               while( b )
 Reserved Word: while
 Bound Symbol: (
 Identifier: b
 Bound Symbol: )
 
-139 		{
+29 		{
 Bound Symbol: {
 
-140                     real c = 123;
+30                     real c = 123;
 Identifier: real
 Identifier: c
 Operator: =
 integer:123
 Bound Symbol: ;
 
-141                     2343 
+31                     2343 
 integer:2343
+integer:
 
-142 		= b - 23;
+32 		= b - 23;
 Operator: =
 Identifier: b
 Operator: -
 integer:23
 Bound Symbol: ;
 
-143                     b = 
+33                     b = 
 Identifier: b
 Operator: =
+Operator: 
 
-144 		- 14.1238675;
+34 		- 14.1238675;
 Operator: -
 real number:14.1238675
 Bound Symbol: ;
 
-145                     print(a)
-Identifier: print
-Bound Symbol: (
-Identifier: a
-Bound Symbol: )
+35                     
+Unknown Token:
 
-146              }
+36              }
 Bound Symbol: }
 
-147        }
+37        }
 Bound Symbol: }
 
-148    }
+38    }
 Bound Symbol: }
 
-149 
+39 
 
-150 /* you should pass all the test case before you start expr1 checking !! */
+40 /* you should pass all the test case before you start expr1 checking !! */
 multipul lines comment:/
 
-151 
+41 
 

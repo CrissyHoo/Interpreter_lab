@@ -1,0 +1,195 @@
+————————————————————————文法非终结符如下——————————————————————————
+A
+B
+D
+E
+F
+G
+I
+K
+L
+M
+N
+O
+S
+T
+X
+
+
+
+————————————————————————文法终结符如下————————————————————————
+#
+$
+(
+)
+*
++
+,
+/
+;
+<
+<=
+<>
+=
+==
+>
+>=
+ID
+INT_NUM
+REAL_NUM
+[
+]
+else
+float
+if
+int
+while
+{
+}
+
+
+
+————————————————————————文法符号的first集如下————————————————————————
+# --- {#}
+$ --- {$}
+( --- {(}
+) --- {)}
+* --- {*}
++ --- {+}
+, --- {,}
+/ --- {/}
+; --- {;}
+< --- {<}
+<= --- {<=}
+<> --- {<>}
+= --- {=}
+== --- {==}
+> --- {>}
+>= --- {>=}
+A --- {ID,float,int}
+B --- {if,while}
+D --- {float,int}
+E --- {(,ID,INT_NUM,REAL_NUM}
+F --- {(,ID,INT_NUM,REAL_NUM}
+G --- {INT_NUM,REAL_NUM}
+I --- {ID}
+ID --- {ID}
+INT_NUM --- {INT_NUM}
+K --- {<,<=,<>,==,>,>=}
+L --- {{}
+M --- {(,ID,INT_NUM,REAL_NUM}
+N --- {INT_NUM,REAL_NUM}
+O --- {(,ID,INT_NUM,REAL_NUM}
+REAL_NUM --- {REAL_NUM}
+S --- {#,$,ID,float,if,int,while}
+T --- {(,ID,INT_NUM,REAL_NUM}
+X --- {INT_NUM,REAL_NUM}
+[ --- {[}
+] --- {]}
+else --- {else}
+float --- {float}
+if --- {if}
+int --- {int}
+while --- {while}
+{ --- {{}
+} --- {}}
+
+
+
+————————————————————————文法产生式的first集如下————————————————————————
+S:= A ; S --- {ID,float,int}
+S:= B S --- {if,while}
+S:= $ --- {$}
+S:= # --- {#}
+A:= D I = N --- {float,int}
+A:= I = N --- {ID}
+A:= D I [ N ] L --- {float,int}
+A:= D I = O --- {float,int}
+A:= I = O --- {ID}
+A:= D I [ N ] --- {float,int}
+A:= I [ N ] L --- {ID}
+B:= if ( E ) { S } --- {if}
+B:= if ( E ) { S } else { S } --- {if}
+B:= while ( E ) { S } --- {while}
+E:= M K M --- {(,ID,INT_NUM,REAL_NUM}
+K:= < --- {<}
+K:= > --- {>}
+K:= == --- {==}
+K:= >= --- {>=}
+K:= <= --- {<=}
+K:= <> --- {<>}
+M:= I --- {ID}
+M:= O --- {(,ID,INT_NUM,REAL_NUM}
+O:= T + O --- {(,ID,INT_NUM,REAL_NUM}
+O:= T --- {(,ID,INT_NUM,REAL_NUM}
+T:= F * T --- {(,ID,INT_NUM,REAL_NUM}
+T:= F / T --- {(,ID,INT_NUM,REAL_NUM}
+T:= F --- {(,ID,INT_NUM,REAL_NUM}
+F:= ( O ) --- {(}
+F:= N --- {INT_NUM,REAL_NUM}
+F:= I --- {ID}
+L:= { X } --- {{}
+L:= { } --- {{}
+X:= G , N --- {INT_NUM,REAL_NUM}
+X:= G --- {INT_NUM,REAL_NUM}
+G:= N --- {INT_NUM,REAL_NUM}
+N:= INT_NUM --- {INT_NUM}
+N:= REAL_NUM --- {REAL_NUM}
+I:= ID --- {ID}
+D:= int --- {int}
+D:= float --- {float}
+
+
+
+————————————————————————预测分析表如下————————————————————————
+A 遇到了 ID,采用产生式:A:= I [ N ] L
+A 遇到了 float,采用产生式:A:= D I [ N ]
+A 遇到了 int,采用产生式:A:= D I [ N ]
+B 遇到了 if,采用产生式:B:= if ( E ) { S } else { S }
+B 遇到了 while,采用产生式:B:= while ( E ) { S }
+D 遇到了 float,采用产生式:D:= float
+D 遇到了 int,采用产生式:D:= int
+E 遇到了 (,采用产生式:E:= M K M
+E 遇到了 ID,采用产生式:E:= M K M
+E 遇到了 INT_NUM,采用产生式:E:= M K M
+E 遇到了 REAL_NUM,采用产生式:E:= M K M
+F 遇到了 (,采用产生式:F:= ( O )
+F 遇到了 ID,采用产生式:F:= I
+F 遇到了 INT_NUM,采用产生式:F:= N
+F 遇到了 REAL_NUM,采用产生式:F:= N
+G 遇到了 INT_NUM,采用产生式:G:= N
+G 遇到了 REAL_NUM,采用产生式:G:= N
+I 遇到了 ID,采用产生式:I:= ID
+K 遇到了 <,采用产生式:K:= <
+K 遇到了 <=,采用产生式:K:= <=
+K 遇到了 <>,采用产生式:K:= <>
+K 遇到了 ==,采用产生式:K:= ==
+K 遇到了 >,采用产生式:K:= >
+K 遇到了 >=,采用产生式:K:= >=
+L 遇到了 {,采用产生式:L:= { }
+M 遇到了 (,采用产生式:M:= O
+M 遇到了 ID,采用产生式:M:= O
+M 遇到了 INT_NUM,采用产生式:M:= O
+M 遇到了 REAL_NUM,采用产生式:M:= O
+N 遇到了 INT_NUM,采用产生式:N:= INT_NUM
+N 遇到了 REAL_NUM,采用产生式:N:= REAL_NUM
+O 遇到了 (,采用产生式:O:= T
+O 遇到了 ID,采用产生式:O:= T
+O 遇到了 INT_NUM,采用产生式:O:= T
+O 遇到了 REAL_NUM,采用产生式:O:= T
+S 遇到了 #,采用产生式:S:= #
+S 遇到了 $,采用产生式:S:= $
+S 遇到了 ID,采用产生式:S:= A ; S
+S 遇到了 float,采用产生式:S:= A ; S
+S 遇到了 if,采用产生式:S:= B S
+S 遇到了 int,采用产生式:S:= A ; S
+S 遇到了 while,采用产生式:S:= B S
+T 遇到了 (,采用产生式:T:= F
+T 遇到了 ID,采用产生式:T:= F
+T 遇到了 INT_NUM,采用产生式:T:= F
+T 遇到了 REAL_NUM,采用产生式:T:= F
+X 遇到了 INT_NUM,采用产生式:X:= G
+X 遇到了 REAL_NUM,采用产生式:X:= G
+
+
+

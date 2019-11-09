@@ -1,5 +1,5 @@
 #include "token.h"
-#include "Utilize.h"
+
 #define MAXTOKENLEN 1000
 char tokenString[MAXTOKENLEN + 1];
 
@@ -59,73 +59,6 @@ static tokenType reservedLookup(char *s)
 	return ID;
 }
 
-void printToken(tokenType token, const char tokenString[]) {
-	switch (token) {
-	case IF:
-	case ELSE:
-	case INT:
-	case REAL:
-	case WHILE:
-		token_ana  << "Reserved Word: " << tokenString << endl;
-		break;
-	
-	case LEFT_BRA:
-	case RIGHT_BRA:
-	case LEFT_INDEX:
-	case RIGHT_INDEX:
-	case LEFT_BOUND:
-	case RIGHT_BOUND:
-	case SIN_QUE:
-	case DOU_QUE:
-	case COMMA:
-	case SEMI:
-	
-		token_ana << "Bound Symbol: " << tokenString << endl;
-		break;
-
-	case PLUS:
-	case MINUS:
-	case MUL:
-	case DIV:
-	case MOD:
-	case ASSIGN:
-	case LES:
-	case LES_EQU:
-	case GRT:
-	case GRT_EQU:
-	case NOT_EQU:
-	case EQU:
-		token_ana << "Operator: " << tokenString << endl; break;
-	
-	case INT_NUM:
-		token_ana << "integer:" << tokenString << endl; break;
-	case REAL_NUM:
-		token_ana << "real number:" << tokenString << endl; break;
-		break;
-
-	case ID:
-		token_ana << "Identifier: " << tokenString<< endl;
-		break;
-	case LINE_NOTE:
-		token_ana << "line comment:" << tokenString << endl;
-		break;
-	case MULTI_NOTE:
-		token_ana << "multipul lines comment:" << tokenString << endl;
-		break;
-	case ERROR:
-		hasError = true;
-		token_ana << "ERROR token:" << tokenString << endl;
-		errt.content = tokenString;
-		errt.line = line;
-		err.push_back(errt);
-		
-		
-		
-		break;
-	default: 
-		token_ana << "Unknown Token:" << tokenString << endl;
-	}
-}
 
 static stateType stateSave = START; //保存DFA状态
 stateType state = stateSave;        //DFA状态
@@ -153,19 +86,21 @@ void getToken(string ss) {
 				if (isdigit(c))
 				{
 					state = INNUM;
+					currentToken = INT_NUM;
 				}
 				else if (isLetter(c))
 				{
 					state = INID;
+					currentToken = ID;
 				}
 				else if (c == '>')
 				{
-					//currentToken = MORE;
+					currentToken = GRT;
 					state = INGRT;
 				}
 				else if (c == '<')
 				{
-					//currentToken = LESS;
+					currentToken = LES;
 					state = INLES;
 				}
 
@@ -176,19 +111,24 @@ void getToken(string ss) {
 				}
 				else if (c == '+') {
 					state = INPLUS;
+					currentToken = PLUS;
 					
 				}
 				else if (c == '-') {
 					state = INMIN;
+					currentToken = MINUS;
 				}
 				else if (c == '*') {
 					state = INMUL;
+					currentToken = MUL;
 				}
 				else if (c == '/') {
 					state = INDIV;
+					currentToken = DIV;
 				}
 				else if (c == '%') {
 					state = INMOD;
+					currentToken = MOD;
 				}
 				else if ((c == ' ') || (c == '\t') || (c == '\n'))
 				{
@@ -236,6 +176,12 @@ void getToken(string ss) {
 						
 					}
 
+					state = DONE;
+				}
+
+				if (ssIndex + 1 == ss.length()) {
+					//如果这个正好是一行的最末尾一个,当前的状态不可以再带到下一行的状态了。
+					//对于上述case当时为什么没有给currenttoken赋值我感到很迷惑
 					state = DONE;
 				}
 			
@@ -306,6 +252,10 @@ void getToken(string ss) {
 				{
 					state = INID;
 					currentToken = ID;
+					if (ssIndex + 1 == ss.length()) {
+						//如果已经结尾了
+						state = DONE;
+					}
 				}
 				else {
 					ssIndex--;
@@ -365,7 +315,7 @@ void getToken(string ss) {
 					currentToken = ASSIGN;
 				}
 				else {
-					state = INSPECIAL;
+					state = DONE;
 					currentToken = EQU;
 
 				}
@@ -373,20 +323,21 @@ void getToken(string ss) {
 				break;
 			case INLES:
 				if (c == '=') {
-					state = INSPECIAL;
+					state = DONE;
 					currentToken = LES_EQU;
 				}
 				else if (c == '>') {
-					state = INSPECIAL;
+					state = DONE;
 					currentToken = NOT_EQU;
 				}
 				else {
 					state = DONE;
 					currentToken = LES;
 				}
+				break;
 			case INGRT:
 				if (c == '=') {
-					state=INSPECIAL;
+					state=DONE;
 					currentToken = GRT_EQU;
 
 				}
@@ -394,6 +345,7 @@ void getToken(string ss) {
 					state = DONE;
 					currentToken = GRT;
 				}
+				break;
 			case INLINECOM:
 				save = false;
 				if (ssIndex == ss.length() - 1) {
@@ -422,11 +374,11 @@ void getToken(string ss) {
 					state = INMULCOM1;
 				}
 				break;
-			case INSPECIAL:
-				state = DONE;
-				save = false;
-				ssIndex--;
-				break;
+			//case INSPECIAL:
+			//	state = DONE;
+			//	save = false;
+			//	ssIndex--;
+			//	break;
 			case DONE: //接受状态
 				break;
 			default:

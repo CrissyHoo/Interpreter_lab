@@ -1,5 +1,5 @@
 ﻿C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Common7\IDE\VC\VCTargets\Microsoft.CppBuild.targets(391,5): warning MSB8028: 中间目录(Debug\)包含从另一个项目(token.vcxproj)共享的文件。   这会导致错误的清除和重新生成行为。
-  token.cpp
-c:\users\judyhu\source\repos\interpreterlab\token\token\token.cpp(139): warning C4018: “<”: 有符号/无符号不匹配
-c:\users\judyhu\source\repos\interpreterlab\token\token\token.cpp(141): warning C4018: “<”: 有符号/无符号不匹配
+  lex.cpp
+c:\users\judyhu\source\repos\interpreterlab\token\token\lex.cpp(92): warning C4018: “<”: 有符号/无符号不匹配
+c:\users\judyhu\source\repos\interpreterlab\token\token\lex.cpp(125): warning C4018: “<”: 有符号/无符号不匹配
   token.vcxproj -> C:\Users\JudyHu\source\repos\interpreterLab\token\Debug\interpreter.exe

@@ -1,40 +1,41 @@
-S := A ; S
-S := B S
-S := #
-A := D I = N
-A := I = N
-A := D I [ N ] L
-A := D I = O
-A := I = O
-A := D I [ N ]
-A := I [ N ] L
-B := if ( E ) { S }
-B := if ( E ) { S } else { S }
-B := while ( E ) { S }
-E := M K M
-K := <
-K := >
-K := ==
-K := >=
-K := <=
-K := <>
-M := I
-M := O
-O := T + O
-O := T
-T := F * T
-T := F / T
-T := F
-F := ( O )
-F := N
-F := I
-L := { X }
-L := { }
-X := G , N
-X := G
-G := N
-N := INT_NUM
-N := REAL_NUM
-I := ID
-D := int
-D := float
+S:= A ; S
+S:= B S
+S:= $
+S:= #
+A:= D I = N
+A:= I = N
+A:= D I [ N ] L
+A:= D I = O
+A:= I = O
+A:= D I [ N ]
+A:= I [ N ] L
+B:= if ( E ) { S }
+B:= if ( E ) { S } else { S }
+B:= while ( E ) { S }
+E:= M K M
+K:= <
+K:= >
+K:= ==
+K:= >=
+K:= <=
+K:= <>
+M:= I
+M:= O
+O:= T + O
+O:= T
+T:= F * T
+T:= F / T
+T:= F
+F:= ( O )
+F:= N
+F:= I
+L:= { X }
+L:= { }
+X:= G , N
+X:= G
+G:= N
+N:= INT_NUM
+N:= REAL_NUM
+I:= ID
+D:= int
+D:= float
