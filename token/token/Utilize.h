@@ -12,7 +12,7 @@
 using namespace std;
 typedef enum {
 
-	INIT,//默认初始值
+	INIT=0,//默认初始值
 	//异常
 	ERROR,
 
@@ -51,15 +51,62 @@ typedef enum {
 	MULTI_NOTE  //  /**/
 
 }tokenType;
+//为了方便使用需要把enum转化成string
+
+const string stokenType[]={
+
+	"INIT",//默认初始值
+	//异常
+	"ERROR",
+
+	//关键字
+	"IF",   //if
+	"ELSE", //else
+	"WHILE",  //while
+	"INT",   //int
+	"REAL",   //float
+
+	//数字
+	"INT_NUM",
+	"REAL_NUM",
+
+	//标识符
+	"ID",
+
+	//运算符
+	"PLUS",       //+
+	"MINUS",      //-
+	"MUL",        //*
+	"DIV",        // /
+	"MOD",        // % 
+	"ASSIGN", "LES", "LES_EQU", "GRT", "GRT_EQU", "NOT_EQU", "EQU",//=,<,<=,>,>=,<>,==
+
+	//界限符
+	"LEFT_BRA", "RIGHT_BRA",   //     (, )
+	"LEFT_INDEX", "RIGHT_INDEX",  //  [, ]
+	"LEFT_BOUND", "RIGHT_BOUND",//    {, }
+	"POINTE", "COMMA", "SEMI", "SIN_QUE", "DOU_QUE", //. , ; ' "
+
+
+	//注释
+
+	"LINE_NOTE",  //  //
+	"MULTI_NOTE"  //  /**/
+
+};
+string EToString(const tokenType eParam);
+
+
+
 //为语法分析设置的结构，存储每个token的信息
 struct tokenInfo {
-	string type;
+	tokenType type;
 	string content;
 	int line;//token所处位置
 
 	//初始化函数
 	tokenInfo() {
-		type = " ";
+		type = INIT;
 		content = " ";
 		line = -1;
 	}
@@ -111,6 +158,7 @@ void saveProductionFirst(map<int, set<string>> productionFirstSet, ofstream &out
 void saveFollow(map<string, set<string>> followSet, ofstream &out);
 void saveProductionSelect(map<int, set<string>> selectSet, ofstream &out);
 void savePredictionTable(map<string, map<string, string>> predictionTable, ofstream &out);
+void saveTokenRes(list<tokenInfo> resultTok, ofstream &out);
 
 extern ofstream token_ana;
 extern list<tokenInfo> resultTok;

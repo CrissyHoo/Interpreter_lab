@@ -1,41 +1,41 @@
-S:= A ; S
+S:= A SEMI S
 S:= B S
 S:= $
 S:= #
-A:= D I = N
+A:= D I ASSIGN N
 A:= I = N
-A:= D I [ N ] L
-A:= D I = O
+A:= D I LEFT_INDEX N RIGHT_INDEX L
+A:= D I ASSIGN O
 A:= I = O
-A:= D I [ N ]
-A:= I [ N ] L
-B:= if ( E ) { S }
-B:= if ( E ) { S } else { S }
-B:= while ( E ) { S }
+A:= D I LEFT_INDEX N RIGHT_INDEX
+A:= I LEFT_INDEX N RIGHT_INDEX L
+B:= IF LEFT_BRA E RIGHT_BRA LEFT_BOUND S RIGHT_BOUND
+B:= IF LEFT_BRA E RIGHT_BRA LEFT_BOUND S RIGHT_BOUND ELSE LEFT_BOUND S RIGHT_BOUND
+B:= while LEFT_BRA E RIGHT_BRA LEFT_BOUND S RIGHT_BOUND
 E:= M K M
-K:= <
-K:= >
-K:= ==
-K:= >=
-K:= <=
-K:= <>
+K:= LES
+K:= GRT
+K:= EQU
+K:= GRT_EQU
+K:= LES_EQU
+K:= NOT_EQU
 M:= I
 M:= O
-O:= T + O
+O:= T PLUS O
 O:= T
-T:= F * T
-T:= F / T
+T:= F MUL T
+T:= F DIV T
 T:= F
-F:= ( O )
+F:= LEFT_BRA O RIGHT_BRA
 F:= N
 F:= I
-L:= { X }
-L:= { }
-X:= G , N
+L:= LEFT_BOUND X RIGHT_BOUND
+L:= LEFT_BOUND RIGHT_BOUND
+X:= G COMMA N
 X:= G
 G:= N
 N:= INT_NUM
 N:= REAL_NUM
 I:= ID
-D:= int
-D:= float
+D:= INT
+D:= REAL

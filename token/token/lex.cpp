@@ -15,14 +15,14 @@ L:later，后续，针对在定义时就已经赋值的情况
 set<string> terminalSym; //定义终结符号集
 set<string> nonterminalSym;//定义非终结符号集
 string startToken;//存储文法的开始符号
-string totalProductions[100];//存放文法文件的每一行，最大的文法条数是100
+string totalProductions[100];//存放文法文件的每一行，存储的内容跟下面这个相同，为了便于输出
 production productions[100];//存储所有的产生式 
 int productionSum;//产生式数目 
 fstream grammarFile; //文法文件
 map<string, set<string>> firstSet;//存所有文法符号的first集合，注意map的用法
 map<int, set<string>> productionFirstSet;//存储所有产生式的first集合
 map<string, set<string>> followSet;//存所有文法的follow集合
-map<string, set<string>> selectSet;//存所有的select集合
+map<int, set<string>> selectSet;//存所有的select集合
 map<string, map<string, string>> predictionTable;//LL1的那个表，预测分析表
 fstream parseFile("parse.txt");//存放语法分析结果文件
 ofstream setFile("setFile.txt");//存放LL1分析表和各种集合表
@@ -32,7 +32,10 @@ stack<string> anaStack;
 stack<tokenInfo> remainTok;
 int top;  //分析栈栈顶指针
 
+
+
 void init() {
+	saveTokenRes(resultTok, setFile);
 	//清空所有数据
 	terminalSym.clear();
 	nonterminalSym.clear();
@@ -181,59 +184,63 @@ void getProductionFirstset() {
 }
 
 //求所有非终结符的follow集合
-void buildFollowSet() {
+void getFollowSet() {
 	followSet[startToken].insert("#");  //文法的开始符号的follow集中包含{#}
 	int preSize;    //非终结符之前的follow集元素个数
 	int curSize;    //非终结符现在的follow集元素个数
 	bool changed;   //非终结符的follow集是否改变
 	bool has$;  //是否有空字
-	int i, j, k;
+	int i, j, k;//i记录了产生式的序号，j记录了右部非终结符的位置
 	int lastNoneTerminal = -1;   //产生式右部最后一个非终结符的位置
 
 	do {
 		changed = false;
 		for (i = 0; i < productionSum; ++i) {
-			for (j = 0; j < productions[i].generation.size(); ++j) {    //对于每条产生式x,如 A->aBβα
-				//如果x[j]是非终结符,即读到B，则求B的follow集
-				if (noneTerminalSymbols.find(productions[i].generation[j]) != noneTerminalSymbols.end()) {
-					preSize = followSet[productions[i].generation[j]].size();   //先求此时B的follow集元素个数
-					for (k = j + 1; k < productions[i].generation.size(); ++k) {  //遍历B之后的文法符号，即βα
+			for (j = 0; j < productions[i].genera.size(); ++j) {    //对于每条产生式,遍历它的右部，如 A->aBβα;另外假设如果是A->aB的情况
+				//一旦在右部找到了非终结符,举例B，则求B的follow集
+				if (nonterminalSym.find(productions[i].genera[j]) != nonterminalSym.end()) {
+
+					preSize = followSet[productions[i].genera[j]].size();   //先求此时B的follow集元素个数
+
+					for (k = j + 1; k < productions[i].genera.size(); ++k) {  //遍历B之后的文法符号，即βα
 						has$ = false;
-						for (set<string>::const_iterator ite = firstSet[productions[i].generation[k]].cbegin();
-							ite != firstSet[productions[i].generation[k]].cend(); ite++) { //将first(β)的非空元素加入follow(B)中
+						for (set<string>::const_iterator ite = firstSet[productions[i].genera[k]].cbegin();ite != firstSet[productions[i].genera[k]].cend(); ite++) 
+						{ 
+							//遍历这个符号的first集，先假设都不为空，只要这个不为空，就把这个符号加到follow集中
 							if (*ite == "$") {
 								has$ = true;
 							}
-							else if (followSet[productions[i].generation[j]].find(*ite) ==
-								followSet[productions[i].generation[j]].end() && *ite != "$") {
-								followSet[productions[i].generation[j]].insert(*ite);
+							else if (followSet[productions[i].genera[j]].find(*ite) ==followSet[productions[i].genera[j]].end() && *ite != "$") 
+							{
+								followSet[productions[i].genera[j]].insert(*ite);
 							}
 						}
-						if (!has$) {    //如果first(β)不包含空字，则退出
+						if (!has$) {    //这个循环过后，如果不含空集了，说明这个文法符号B的follow集已经求完了
 							break;
 						}
 					}   //继续遍历之后的文法符号
-					if (k == productions[i].generation.size() && has$) {    //如果读到产生式末尾，并且最后一个仍包含空字，则把follow(A)也加入follow(B)中
-						for (set<string>::const_iterator ite = followSet[productions[i].noneTerminalSymbol].cbegin();
-							ite != followSet[productions[i].noneTerminalSymbol].cend(); ite++) {
-							if (followSet[productions[i].generation[j]].find(*ite) ==
-								followSet[productions[i].generation[j]].end()) {
-								followSet[productions[i].generation[j]].insert(*ite);
+
+					if (k == productions[i].genera.size() && has$) {    //如果读到产生式末尾，并且最后一个仍包含空字，即B后为空，则把follow(A)也加入follow(B)中
+						for (set<string>::const_iterator ite = followSet[productions[i].nonTerminalSym].cbegin();ite != followSet[productions[i].nonTerminalSym].cend(); ite++) 
+						{
+							if (followSet[productions[i].genera[j]].find(*ite)==followSet[productions[i].genera[j]].end()) 
+							{
+								followSet[productions[i].genera[j]].insert(*ite);
 							}
 						}
 					}
-					curSize = followSet[productions[i].generation[j]].size();   //再求此时B的follow集元素个数
+					curSize = followSet[productions[i].genera[j]].size();   //再求此时B的follow集元素个数
 					if (curSize > preSize) changed = true;
 
 					lastNoneTerminal = j;   //记录最后产生式最后一个非终结符的位置
 				}
 			}
-			if (lastNoneTerminal == j - 1) {    //如果产生式最后一个符号是非终结符，则该follow集将无法由上述步骤求出。因此直接将follow(A)加入该follow集中
-				for (set<string>::const_iterator ite = followSet[productions[i].noneTerminalSymbol].cbegin();
-					ite != followSet[productions[i].noneTerminalSymbol].cend(); ite++) {
-					if (followSet[productions[i].generation[lastNoneTerminal]].find(*ite) ==
-						followSet[productions[i].generation[lastNoneTerminal]].end()) {
-						followSet[productions[i].generation[lastNoneTerminal]].insert(*ite);
+			//上面已经遍历完了第i条产生式的右部
+
+			if (lastNoneTerminal == j - 1) {//如果产生式最后一个符号是非终结符，则该follow集将无法由上述步骤求出。因此直接将follow(A)加入该follow集中
+				for (set<string>::const_iterator ite = followSet[productions[i].nonTerminalSym].cbegin();ite != followSet[productions[i].nonTerminalSym].cend(); ite++) {
+					if (followSet[productions[i].genera[lastNoneTerminal]].find(*ite) ==followSet[productions[i].genera[lastNoneTerminal]].end()) {
+						followSet[productions[i].genera[lastNoneTerminal]].insert(*ite);
 					}
 				}
 				lastNoneTerminal = -1;      //重新恢复初始值
@@ -245,16 +252,52 @@ void buildFollowSet() {
 	} while (changed);  //若follow集改变了，则继续重复操作
 
 	//保存到文件中
-	saveFollow(followSet, set_file);
+	saveFollow(followSet, setFile);
+}
+
+//求select集
+//求所有产生式的select集合
+void getSelectSet() {
+	int i, j;
+
+	for (i = 0; i < productionSum; i++) {
+		//对于A->a
+		//若a不能推出空字，则select(A->a) = first(a)
+		if (productionFirstSet[i].find("$") == productionFirstSet[i].end()) 
+		{
+			for (set<string>::const_iterator ite = productionFirstSet[i].cbegin();ite != productionFirstSet[i].cend(); ite++) {
+				selectSet[i].insert(*ite);
+			}
+		}
+		else {    
+			//如果a能推出空字，则select(A->a) = (first(a) - {$}) U follow(A)
+			for (set<string>::const_iterator ite = productionFirstSet[i].cbegin();ite != productionFirstSet[i].cend(); ite++) {
+				
+				if (*ite != "$") {
+					selectSet[i].insert(*ite);
+				}
+			}
+			//先取出产生式左部非终结符
+			string none = productions[i].nonTerminalSym;
+			//把follow(A)加入select中
+			for (set<string>::const_iterator ite = followSet[none].cbegin();ite != followSet[none].cend(); ite++) {
+				
+				selectSet[i].insert(*ite);
+			}
+		}
+	}
+
+	//保存到文件中
+	saveProductionSelect(selectSet, setFile);
 }
 
 void getPredictTable() {
-	//预测表最好不要有重复，不然就会构成二义性,我们用一个map来存储
+	//用一个map来存储
 	int i;
 	for (i = 0; i < productionSum; i++) {
 		//遍历产生式
-		//遍历第i个产生式的firstset集，并且将第i条文法存储到predictTable[S，a]（S->aB）
-		for (set<string>::const_iterator it = productionFirstSet[i].cbegin(); it != productionFirstSet[i].cend();it++) {
+		//遍历第i个产生式的select集，并且将第i条文法存储到predictTable[S，a]（S->aB）
+		for (set<string>::const_iterator it = selectSet[i].cbegin(); it != selectSet[i].cend();it++) {
 
 			predictionTable[productions[i].nonTerminalSym][*it] = totalProductions[i];
 		}
@@ -286,9 +329,15 @@ void analyse() {
 	
 	anaStack.push(startToken);//首符号进栈
 
-	while (true) {
+	for (int i = 0;;i++) {
+		parseFile << "第" << i + 1 << "步：" << endl;
+		parseFile << "分析栈：";
+		
+		parseFile << "符号串栈:";
+
+
 		//如果分析栈和输入串都只剩下#,分析完成
-		if (anaStack.top()=="#"&&remainTok.top().content == "#") {
+		if (anaStack.top()=="#" && remainTok.top().content == "#") {
 			cout << "语法分析完成" << endl;
 			break;
 		}
@@ -296,12 +345,11 @@ void analyse() {
 			//如果分析栈顶是非终结符
 			//检测预测表中是否有产生式匹配子串栈的栈顶
 			//前提子串栈顶是个终结符，如果满足条件且找到了
-			if (terminalSym.find(remainTok.top().content) != terminalSym.end() &&
-				predictionTable[anaStack.top()].find(remainTok.top().content) != predictionTable[anaStack.top()].end()) 
+			if (terminalSym.find(EToString(remainTok.top().type)) != terminalSym.end() && predictionTable[anaStack.top()].find(EToString(remainTok.top().type)) != predictionTable[anaStack.top()].end()) 
 			{
-				cout << "action:" << predictionTable[anaStack.top()][remainTok.top().content] << endl << endl;
+				cout << "action:" << predictionTable[anaStack.top()][EToString(remainTok.top().type)] << endl << endl;
 				//获取产生式右部
-				usedProduction = split(predictionTable[anaStack.top()][remainTok.top().content], ":= ");
+				usedProduction = split(predictionTable[anaStack.top()][EToString(remainTok.top().type)], ":= ");
 				list<string>::iterator ite = usedProduction.begin();
 				ite++;
 				//获取右部的每一项
@@ -310,8 +358,10 @@ void analyse() {
 				//分析栈弹出并且将产生式右部进栈
 				anaStack.pop();
 				for (auto ite = usedProductionRight.rbegin(); ite != usedProductionRight.rend(); ite++ ) {
-					//从右向左读入产生式，并将其入栈，符合之前的习惯
-					anaStack.push(*ite);
+					//从右向左读入产生式，并将其入栈，符合之前的习惯,如果是空的话就不进栈
+					if ((*ite) != "$") {
+						anaStack.push(*ite);
+					}
 				}
 
 			}
@@ -323,7 +373,7 @@ void analyse() {
 		else if (terminalSym.find(anaStack.top()) != terminalSym.end()) {
 			//如果分析栈栈顶是终结符
 			//如果子串栈顶的元素还是终结符，查看是否可以匹配
-			if (anaStack.top()== remainTok.top().content) {
+			if (anaStack.top()== EToString(remainTok.top().type)) {
 				//如果可以匹配了,弹出
 				anaStack.pop();
 				//剩余串的指针后移一个

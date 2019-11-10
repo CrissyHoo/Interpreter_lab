@@ -8,7 +8,7 @@
    // piece two
    {
         int a = 3<>5;
-        real b=-23;
+        float b=-23;
 	int a[3] = { 1,3,,b,nono }
 	else {b};
         if( a>b){ a        ;

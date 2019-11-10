@@ -7,6 +7,7 @@ list<errorNode> err;//这是一个存储错误信息的list
 errorNode errt;
 bool hasError;
 list<tokenInfo> resultTok; //讲分析结果存储在一个list中，便于语法分析使用
+
 tokenInfo tmp ;
 ofstream token_ana("token.txt");
 

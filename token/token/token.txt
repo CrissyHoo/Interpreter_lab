@@ -43,8 +43,8 @@ Operator: <>
 integer:5
 Bound Symbol: ;
 
-11         real b=-23;
-Identifier: real
+11         float b=-23;
+Reserved Word: float
 Identifier: b
 Operator: =
 Operator: -

@@ -1,3 +1,143 @@
+————————————————————————词法分析结果如下——————————————————————————
+4 5 int
+4 9 a
+4 24 [
+4 7 3
+4 25 ]
+4 30 ;
+5 9 a
+5 15 =
+5 7 234
+5 30 ;
+6 9 b
+6 15 =
+6 9 sdf_234df
+9 26 {
+10 5 int
+10 9 a
+10 15 =
+10 7 3
+10 20 <>
+10 7 5
+10 30 ;
+11 6 float
+11 9 b
+11 15 =
+11 11 -
+11 7 23
+11 30 ;
+12 5 int
+12 9 a
+12 24 [
+12 7 3
+12 25 ]
+12 15 =
+12 26 {
+12 7 1
+12 29 ,
+12 7 3
+12 29 ,
+12 29 ,
+12 9 b
+12 29 ,
+12 9 nono
+12 27 }
+13 3 else
+13 26 {
+13 9 b
+13 27 }
+13 30 ;
+14 2 if
+14 22 (
+14 9 a
+14 18 >b
+14 23 )
+14 26 {
+14 9 a
+14 30 ;
+15 27 }
+16 26 {
+17 7 236
+17 12 *
+17 7 1
+17 10 +
+17 7 345
+17 13 /
+17 7 23
+17 12 *
+17 7 34
+17 23 )
+17 11 -
+17 7 2346
+17 13 /
+17 22 (
+17 7 31
+17 11 -
+17 7 31
+17 23 )
+17 15 =
+17 9 xx
+18 27 }
+19 27 }
+22 26 {
+23 5 int
+23 9 a
+23 30 ;
+23 6 float
+23 9 b
+23 15 =
+23 8 0.234
+23 30 ;
+24 26 {
+25 26 {
+25 9 a_b_c_d_e____1
+25 21 ==
+25 8 0126.120
+26 4 while
+26 22 (
+26 9 a
+26 18 >+
+26 7 234
+26 23 )
+26 26 {
+27 9 b
+27 15 =
+27 9 b
+27 11 -
+27 7 1
+27 11 -
+27 9 a
+27 30 ;
+28 4 while
+28 22 (
+28 9 b
+28 23 )
+29 26 {
+30 9 real
+30 9 c
+30 15 =
+30 7 123
+30 30 ;
+31 7 2343
+31 7 
+32 15 =
+32 9 b
+32 11 -
+32 7 23
+32 30 ;
+33 9 b
+33 15 =
+33 15 
+34 11 -
+34 8 14.1238675
+34 30 ;
+35 0 
+36 27 }
+37 27 }
+38 27 }
+
+
+
 ————————————————————————文法非终结符如下——————————————————————————
 A
 B
@@ -20,173 +160,239 @@ X
 ————————————————————————文法终结符如下————————————————————————
 #
 $
-(
-)
-*
-+
-,
-/
-;
-<
-<=
-<>
 =
-==
->
->=
+ASSIGN
+COMMA
+DIV
+ELSE
+EQU
+GRT
+GRT_EQU
 ID
+IF
+INT
 INT_NUM
+LEFT_BOUND
+LEFT_BRA
+LEFT_INDEX
+LES
+LES_EQU
+MUL
+NOT_EQU
+PLUS
+REAL
 REAL_NUM
-[
-]
-else
-float
-if
-int
+RIGHT_BOUND
+RIGHT_BRA
+RIGHT_INDEX
+SEMI
 while
-{
-}
 
 
 
 ————————————————————————文法符号的first集如下————————————————————————
 # --- {#}
 $ --- {$}
-( --- {(}
-) --- {)}
-* --- {*}
-+ --- {+}
-, --- {,}
-/ --- {/}
-; --- {;}
-< --- {<}
-<= --- {<=}
-<> --- {<>}
 = --- {=}
-== --- {==}
-> --- {>}
->= --- {>=}
-A --- {ID,float,int}
-B --- {if,while}
-D --- {float,int}
-E --- {(,ID,INT_NUM,REAL_NUM}
-F --- {(,ID,INT_NUM,REAL_NUM}
+A --- {ID,INT,REAL}
+ASSIGN --- {ASSIGN}
+B --- {IF,while}
+COMMA --- {COMMA}
+D --- {INT,REAL}
+DIV --- {DIV}
+E --- {ID,INT_NUM,LEFT_BRA,REAL_NUM}
+ELSE --- {ELSE}
+EQU --- {EQU}
+F --- {ID,INT_NUM,LEFT_BRA,REAL_NUM}
 G --- {INT_NUM,REAL_NUM}
+GRT --- {GRT}
+GRT_EQU --- {GRT_EQU}
 I --- {ID}
 ID --- {ID}
+IF --- {IF}
+INT --- {INT}
 INT_NUM --- {INT_NUM}
-K --- {<,<=,<>,==,>,>=}
-L --- {{}
-M --- {(,ID,INT_NUM,REAL_NUM}
+K --- {EQU,GRT,GRT_EQU,LES,LES_EQU,NOT_EQU}
+L --- {LEFT_BOUND}
+LEFT_BOUND --- {LEFT_BOUND}
+LEFT_BRA --- {LEFT_BRA}
+LEFT_INDEX --- {LEFT_INDEX}
+LES --- {LES}
+LES_EQU --- {LES_EQU}
+M --- {ID,INT_NUM,LEFT_BRA,REAL_NUM}
+MUL --- {MUL}
 N --- {INT_NUM,REAL_NUM}
-O --- {(,ID,INT_NUM,REAL_NUM}
+NOT_EQU --- {NOT_EQU}
+O --- {ID,INT_NUM,LEFT_BRA,REAL_NUM}
+PLUS --- {PLUS}
+REAL --- {REAL}
 REAL_NUM --- {REAL_NUM}
-S --- {#,$,ID,float,if,int,while}
-T --- {(,ID,INT_NUM,REAL_NUM}
+RIGHT_BOUND --- {RIGHT_BOUND}
+RIGHT_BRA --- {RIGHT_BRA}
+RIGHT_INDEX --- {RIGHT_INDEX}
+S --- {#,$,ID,IF,INT,REAL,while}
+SEMI --- {SEMI}
+T --- {ID,INT_NUM,LEFT_BRA,REAL_NUM}
 X --- {INT_NUM,REAL_NUM}
-[ --- {[}
-] --- {]}
-else --- {else}
-float --- {float}
-if --- {if}
-int --- {int}
 while --- {while}
-{ --- {{}
-} --- {}}
 
 
 
 ————————————————————————文法产生式的first集如下————————————————————————
-S:= A ; S --- {ID,float,int}
-S:= B S --- {if,while}
+S:= A SEMI S --- {ID,INT,REAL}
+S:= B S --- {IF,while}
 S:= $ --- {$}
 S:= # --- {#}
-A:= D I = N --- {float,int}
+A:= D I ASSIGN N --- {INT,REAL}
 A:= I = N --- {ID}
-A:= D I [ N ] L --- {float,int}
-A:= D I = O --- {float,int}
+A:= D I LEFT_INDEX N RIGHT_INDEX L --- {INT,REAL}
+A:= D I ASSIGN O --- {INT,REAL}
 A:= I = O --- {ID}
-A:= D I [ N ] --- {float,int}
-A:= I [ N ] L --- {ID}
-B:= if ( E ) { S } --- {if}
-B:= if ( E ) { S } else { S } --- {if}
-B:= while ( E ) { S } --- {while}
-E:= M K M --- {(,ID,INT_NUM,REAL_NUM}
-K:= < --- {<}
-K:= > --- {>}
-K:= == --- {==}
-K:= >= --- {>=}
-K:= <= --- {<=}
-K:= <> --- {<>}
+A:= D I LEFT_INDEX N RIGHT_INDEX --- {INT,REAL}
+A:= I LEFT_INDEX N RIGHT_INDEX L --- {ID}
+B:= IF LEFT_BRA E RIGHT_BRA LEFT_BOUND S RIGHT_BOUND --- {IF}
+B:= IF LEFT_BRA E RIGHT_BRA LEFT_BOUND S RIGHT_BOUND ELSE LEFT_BOUND S RIGHT_BOUND --- {IF}
+B:= while LEFT_BRA E RIGHT_BRA LEFT_BOUND S RIGHT_BOUND --- {while}
+E:= M K M --- {ID,INT_NUM,LEFT_BRA,REAL_NUM}
+K:= LES --- {LES}
+K:= GRT --- {GRT}
+K:= EQU --- {EQU}
+K:= GRT_EQU --- {GRT_EQU}
+K:= LES_EQU --- {LES_EQU}
+K:= NOT_EQU --- {NOT_EQU}
 M:= I --- {ID}
-M:= O --- {(,ID,INT_NUM,REAL_NUM}
-O:= T + O --- {(,ID,INT_NUM,REAL_NUM}
-O:= T --- {(,ID,INT_NUM,REAL_NUM}
-T:= F * T --- {(,ID,INT_NUM,REAL_NUM}
-T:= F / T --- {(,ID,INT_NUM,REAL_NUM}
-T:= F --- {(,ID,INT_NUM,REAL_NUM}
-F:= ( O ) --- {(}
+M:= O --- {ID,INT_NUM,LEFT_BRA,REAL_NUM}
+O:= T PLUS O --- {ID,INT_NUM,LEFT_BRA,REAL_NUM}
+O:= T --- {ID,INT_NUM,LEFT_BRA,REAL_NUM}
+T:= F MUL T --- {ID,INT_NUM,LEFT_BRA,REAL_NUM}
+T:= F DIV T --- {ID,INT_NUM,LEFT_BRA,REAL_NUM}
+T:= F --- {ID,INT_NUM,LEFT_BRA,REAL_NUM}
+F:= LEFT_BRA O RIGHT_BRA --- {LEFT_BRA}
 F:= N --- {INT_NUM,REAL_NUM}
 F:= I --- {ID}
-L:= { X } --- {{}
-L:= { } --- {{}
-X:= G , N --- {INT_NUM,REAL_NUM}
+L:= LEFT_BOUND X RIGHT_BOUND --- {LEFT_BOUND}
+L:= LEFT_BOUND RIGHT_BOUND --- {LEFT_BOUND}
+X:= G COMMA N --- {INT_NUM,REAL_NUM}
 X:= G --- {INT_NUM,REAL_NUM}
 G:= N --- {INT_NUM,REAL_NUM}
 N:= INT_NUM --- {INT_NUM}
 N:= REAL_NUM --- {REAL_NUM}
 I:= ID --- {ID}
-D:= int --- {int}
-D:= float --- {float}
+D:= INT --- {INT}
+D:= REAL --- {REAL}
+
+
+
+————————————————————————非终结符的follow集如下————————————————————————
+A --- {SEMI}
+B --- {#,ID,IF,INT,REAL,RIGHT_BOUND,while}
+D --- {ID}
+E --- {RIGHT_BRA}
+F --- {DIV,EQU,GRT,GRT_EQU,LES,LES_EQU,MUL,NOT_EQU,PLUS,RIGHT_BRA,SEMI}
+G --- {COMMA,RIGHT_BOUND}
+I --- {=,ASSIGN,DIV,EQU,GRT,GRT_EQU,LEFT_INDEX,LES,LES_EQU,MUL,NOT_EQU,PLUS,RIGHT_BRA,SEMI}
+K --- {ID,INT_NUM,LEFT_BRA,REAL_NUM}
+L --- {SEMI}
+M --- {EQU,GRT,GRT_EQU,LES,LES_EQU,NOT_EQU,RIGHT_BRA}
+N --- {COMMA,DIV,EQU,GRT,GRT_EQU,LES,LES_EQU,MUL,NOT_EQU,PLUS,RIGHT_BOUND,RIGHT_BRA,RIGHT_INDEX,SEMI}
+O --- {EQU,GRT,GRT_EQU,LES,LES_EQU,NOT_EQU,RIGHT_BRA,SEMI}
+S --- {#,RIGHT_BOUND}
+T --- {EQU,GRT,GRT_EQU,LES,LES_EQU,NOT_EQU,PLUS,RIGHT_BRA,SEMI}
+X --- {RIGHT_BOUND}
+
+
+
+————————————————————————产生式的select集如下————————————————————————
+S:= A SEMI S --- {ID,INT,REAL}
+S:= B S --- {IF,while}
+S:= $ --- {#,RIGHT_BOUND}
+S:= # --- {#}
+A:= D I ASSIGN N --- {INT,REAL}
+A:= I = N --- {ID}
+A:= D I LEFT_INDEX N RIGHT_INDEX L --- {INT,REAL}
+A:= D I ASSIGN O --- {INT,REAL}
+A:= I = O --- {ID}
+A:= D I LEFT_INDEX N RIGHT_INDEX --- {INT,REAL}
+A:= I LEFT_INDEX N RIGHT_INDEX L --- {ID}
+B:= IF LEFT_BRA E RIGHT_BRA LEFT_BOUND S RIGHT_BOUND --- {IF}
+B:= IF LEFT_BRA E RIGHT_BRA LEFT_BOUND S RIGHT_BOUND ELSE LEFT_BOUND S RIGHT_BOUND --- {IF}
+B:= while LEFT_BRA E RIGHT_BRA LEFT_BOUND S RIGHT_BOUND --- {while}
+E:= M K M --- {ID,INT_NUM,LEFT_BRA,REAL_NUM}
+K:= LES --- {LES}
+K:= GRT --- {GRT}
+K:= EQU --- {EQU}
+K:= GRT_EQU --- {GRT_EQU}
+K:= LES_EQU --- {LES_EQU}
+K:= NOT_EQU --- {NOT_EQU}
+M:= I --- {ID}
+M:= O --- {ID,INT_NUM,LEFT_BRA,REAL_NUM}
+O:= T PLUS O --- {ID,INT_NUM,LEFT_BRA,REAL_NUM}
+O:= T --- {ID,INT_NUM,LEFT_BRA,REAL_NUM}
+T:= F MUL T --- {ID,INT_NUM,LEFT_BRA,REAL_NUM}
+T:= F DIV T --- {ID,INT_NUM,LEFT_BRA,REAL_NUM}
+T:= F --- {ID,INT_NUM,LEFT_BRA,REAL_NUM}
+F:= LEFT_BRA O RIGHT_BRA --- {LEFT_BRA}
+F:= N --- {INT_NUM,REAL_NUM}
+F:= I --- {ID}
+L:= LEFT_BOUND X RIGHT_BOUND --- {LEFT_BOUND}
+L:= LEFT_BOUND RIGHT_BOUND --- {LEFT_BOUND}
+X:= G COMMA N --- {INT_NUM,REAL_NUM}
+X:= G --- {INT_NUM,REAL_NUM}
+G:= N --- {INT_NUM,REAL_NUM}
+N:= INT_NUM --- {INT_NUM}
+N:= REAL_NUM --- {REAL_NUM}
+I:= ID --- {ID}
+D:= INT --- {INT}
+D:= REAL --- {REAL}
 
 
 
 ————————————————————————预测分析表如下————————————————————————
-A 遇到了 ID,采用产生式:A:= I [ N ] L
-A 遇到了 float,采用产生式:A:= D I [ N ]
-A 遇到了 int,采用产生式:A:= D I [ N ]
-B 遇到了 if,采用产生式:B:= if ( E ) { S } else { S }
-B 遇到了 while,采用产生式:B:= while ( E ) { S }
-D 遇到了 float,采用产生式:D:= float
-D 遇到了 int,采用产生式:D:= int
-E 遇到了 (,采用产生式:E:= M K M
+A 遇到了 ID,采用产生式:A:= I LEFT_INDEX N RIGHT_INDEX L
+A 遇到了 INT,采用产生式:A:= D I LEFT_INDEX N RIGHT_INDEX
+A 遇到了 REAL,采用产生式:A:= D I LEFT_INDEX N RIGHT_INDEX
+B 遇到了 IF,采用产生式:B:= IF LEFT_BRA E RIGHT_BRA LEFT_BOUND S RIGHT_BOUND ELSE LEFT_BOUND S RIGHT_BOUND
+B 遇到了 while,采用产生式:B:= while LEFT_BRA E RIGHT_BRA LEFT_BOUND S RIGHT_BOUND
+D 遇到了 INT,采用产生式:D:= INT
+D 遇到了 REAL,采用产生式:D:= REAL
 E 遇到了 ID,采用产生式:E:= M K M
 E 遇到了 INT_NUM,采用产生式:E:= M K M
+E 遇到了 LEFT_BRA,采用产生式:E:= M K M
 E 遇到了 REAL_NUM,采用产生式:E:= M K M
-F 遇到了 (,采用产生式:F:= ( O )
 F 遇到了 ID,采用产生式:F:= I
 F 遇到了 INT_NUM,采用产生式:F:= N
+F 遇到了 LEFT_BRA,采用产生式:F:= LEFT_BRA O RIGHT_BRA
 F 遇到了 REAL_NUM,采用产生式:F:= N
 G 遇到了 INT_NUM,采用产生式:G:= N
 G 遇到了 REAL_NUM,采用产生式:G:= N
 I 遇到了 ID,采用产生式:I:= ID
-K 遇到了 <,采用产生式:K:= <
-K 遇到了 <=,采用产生式:K:= <=
-K 遇到了 <>,采用产生式:K:= <>
-K 遇到了 ==,采用产生式:K:= ==
-K 遇到了 >,采用产生式:K:= >
-K 遇到了 >=,采用产生式:K:= >=
-L 遇到了 {,采用产生式:L:= { }
-M 遇到了 (,采用产生式:M:= O
+K 遇到了 EQU,采用产生式:K:= EQU
+K 遇到了 GRT,采用产生式:K:= GRT
+K 遇到了 GRT_EQU,采用产生式:K:= GRT_EQU
+K 遇到了 LES,采用产生式:K:= LES
+K 遇到了 LES_EQU,采用产生式:K:= LES_EQU
+K 遇到了 NOT_EQU,采用产生式:K:= NOT_EQU
+L 遇到了 LEFT_BOUND,采用产生式:L:= LEFT_BOUND RIGHT_BOUND
 M 遇到了 ID,采用产生式:M:= O
 M 遇到了 INT_NUM,采用产生式:M:= O
+M 遇到了 LEFT_BRA,采用产生式:M:= O
 M 遇到了 REAL_NUM,采用产生式:M:= O
 N 遇到了 INT_NUM,采用产生式:N:= INT_NUM
 N 遇到了 REAL_NUM,采用产生式:N:= REAL_NUM
-O 遇到了 (,采用产生式:O:= T
 O 遇到了 ID,采用产生式:O:= T
 O 遇到了 INT_NUM,采用产生式:O:= T
+O 遇到了 LEFT_BRA,采用产生式:O:= T
 O 遇到了 REAL_NUM,采用产生式:O:= T
 S 遇到了 #,采用产生式:S:= #
-S 遇到了 $,采用产生式:S:= $
-S 遇到了 ID,采用产生式:S:= A ; S
-S 遇到了 float,采用产生式:S:= A ; S
-S 遇到了 if,采用产生式:S:= B S
-S 遇到了 int,采用产生式:S:= A ; S
+S 遇到了 ID,采用产生式:S:= A SEMI S
+S 遇到了 IF,采用产生式:S:= B S
+S 遇到了 INT,采用产生式:S:= A SEMI S
+S 遇到了 REAL,采用产生式:S:= A SEMI S
+S 遇到了 RIGHT_BOUND,采用产生式:S:= $
 S 遇到了 while,采用产生式:S:= B S
-T 遇到了 (,采用产生式:T:= F
 T 遇到了 ID,采用产生式:T:= F
 T 遇到了 INT_NUM,采用产生式:T:= F
+T 遇到了 LEFT_BRA,采用产生式:T:= F
 T 遇到了 REAL_NUM,采用产生式:T:= F
 X 遇到了 INT_NUM,采用产生式:X:= G
 X 遇到了 REAL_NUM,采用产生式:X:= G

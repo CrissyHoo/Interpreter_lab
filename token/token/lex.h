@@ -14,4 +14,6 @@ void saveProduction(string grammarName);
 void getFirstSet();
 void getProductionFirstset();
 void getPredictTable();
+void getFollowSet();
+void getSelectSet();
 void analyse();

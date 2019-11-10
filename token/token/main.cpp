@@ -45,6 +45,8 @@ int main() {
 		saveProduction("grammar.txt");
 		getFirstSet();
 		getProductionFirstset();
+		getFollowSet();
+		getSelectSet();
 		getPredictTable();
 		analyse();
 

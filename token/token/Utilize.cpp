@@ -89,6 +89,17 @@ void printToken(tokenType token, const char tokenString[]) {
 	}
 }
 
+void saveTokenRes(list<tokenInfo> resultTok, ofstream &out) {
+//嬉咫簡隈蛍裂潤惚
+	out << "！！！！！！！！！！！！！！！！！！！！！！！！簡隈蛍裂潤惚泌和！！！！！！！！！！！！！！！！！！！！！！！！！！" << endl;
+	if (out.is_open()) {
+		for (list<tokenInfo>::const_iterator it = resultTok.cbegin(); it != resultTok.cend(); it++) {
+			out << it->line << " " << it->type << " " << it->content<<endl;
+		}
+	}
+	out << endl << endl << endl;
+}
+
 void saveNoneTerminal(set<string> noneTerminalSymbols, ofstream &out) {
 	out << "！！！！！！！！！！！！！！！！！！！！！！！！猟隈掲嶮潤憲泌和！！！！！！！！！！！！！！！！！！！！！！！！！！" << endl;
 	if (out.is_open()) {
@@ -210,4 +221,9 @@ void savePredictionTable(map<string, map<string, string>> predictionTable, ofstr
 		}
 	}
 	out << endl << endl << endl;
+}
+
+string EToString(const tokenType eParam)
+{
+	return stokenType[eParam];
 }
