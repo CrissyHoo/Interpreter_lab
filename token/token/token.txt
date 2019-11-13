@@ -7,7 +7,9 @@ line comment:/
 3    // piece one
 line comment:/
 
-4    int a[3];
+4 
+
+5    int a[3];
 Reserved Word: int
 Identifier: a
 Bound Symbol: [
@@ -15,33 +17,25 @@ integer:3
 Bound Symbol: ]
 Bound Symbol: ;
 
-5    a = 234;
+6    a = 234;
 Identifier: a
 Operator: =
 integer:234
 Bound Symbol: ;
 
-6    b = sdf_234df
+7    b = sdf_234df;
 Identifier: b
 Operator: =
 Identifier: sdf_234df
+Bound Symbol: ;
 
-7 
+8 
 
-8    // piece two
+9    // piece two
 line comment:/
 
-9    {
-Bound Symbol: {
-
-10         int a = 3<>5;
-Reserved Word: int
-Identifier: a
-Operator: =
-integer:3
-Operator: <>
-integer:5
-Bound Symbol: ;
+10        // int a = 3<>5;
+line comment:/
 
 11         float b=-23;
 Reserved Word: float
@@ -51,7 +45,7 @@ Operator: -
 integer:23
 Bound Symbol: ;
 
-12 	int a[3] = { 1,3,,b,nono }
+12 	int a[3] = { 1,3,4,8 }
 Reserved Word: int
 Identifier: a
 Bound Symbol: [
@@ -63,14 +57,12 @@ integer:1
 Bound Symbol: ,
 integer:3
 Bound Symbol: ,
+integer:4
 Bound Symbol: ,
-Identifier: b
-Bound Symbol: ,
-Identifier: nono
+integer:8
 Bound Symbol: }
 
-13 	else {b};
-Reserved Word: else
+13 	{b};
 Bound Symbol: {
 Identifier: b
 Bound Symbol: }
@@ -117,8 +109,8 @@ Identifier: xx
 18           }
 Bound Symbol: }
 
-19    }
-Bound Symbol: }
+19    
+Unknown Token:
 
 20 
 

@@ -2,13 +2,41 @@
 #include "Utilize.h"
 /*对grammar的注释
 S：开始符号
-A：句子
-B：block，模块，比如while板块，if板块
-D:int或者float
-I：ID
-N:一个数，整数或者浮点数
-L:later，后续，针对在定义时就已经赋值的情况
-
+B：block,程序块
+BB:程序块闭包
+CF:复合程序块
+T: int或者float
+I：ID标识符
+V：变量 
+D: 数组下标，可以没有，这样就是普通变量
+N: 一个数，整数或者浮点数
+F: 因式
+FR:因式递归
+IT:因子
+E：表达式
+M: 项
+Q: 声明
+QB: 声明语句
+QBB:声明语句闭包
+QS：声明语句
+IN：initial 赋初值
+L: left value
+MN: multiple number
+NB:数据闭包
+P:参数
+PB:参数闭包
+AF：赋值/函数
+AC：assign or call functions
+C:条件语句
+CB:条件语句块
+OE:逻辑表达式
+O:逻辑运算符
+EL:否则语句
+PL：参数列表
+R:函数返回
+WL:while循环
+WLB:while循环块
+ST:标准函数
 */
 //用#表示结束，用$表示空
 
@@ -189,7 +217,7 @@ void getFollowSet() {
 	int preSize;    //非终结符之前的follow集元素个数
 	int curSize;    //非终结符现在的follow集元素个数
 	bool changed;   //非终结符的follow集是否改变
-	bool has$;  //是否有空字
+	bool has$=false;  //是否有空字
 	int i, j, k;//i记录了产生式的序号，j记录了右部非终结符的位置
 	int lastNoneTerminal = -1;   //产生式右部最后一个非终结符的位置
 
@@ -330,11 +358,6 @@ void analyse() {
 	anaStack.push(startToken);//首符号进栈
 
 	for (int i = 0;;i++) {
-		parseFile << "第" << i + 1 << "步：" << endl;
-		parseFile << "分析栈：";
-		
-		parseFile << "符号串栈:";
-
 
 		//如果分析栈和输入串都只剩下#,分析完成
 		if (anaStack.top()=="#" && remainTok.top().content == "#") {
@@ -388,6 +411,8 @@ void analyse() {
 		}
 	}
 }
+
+
 
 
 
