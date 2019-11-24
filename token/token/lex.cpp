@@ -1,5 +1,6 @@
 #include "lex.h"
 #include "Utilize.h"
+
 /*对grammar的注释
 S：开始符号
 B：block,程序块
@@ -39,7 +40,7 @@ WLB:while循环块
 ST:标准函数
 */
 //用#表示结束，用$表示空
-
+//需要在这个部分加入语法树的绘制
 set<string> terminalSym; //定义终结符号集
 set<string> nonterminalSym;//定义非终结符号集
 string startToken;//存储文法的开始符号
@@ -56,7 +57,8 @@ fstream parseFile("parse.txt");//存放语法分析结果文件
 ofstream setFile("setFile.txt");//存放LL1分析表和各种集合表
 
 
-stack<string> anaStack;
+
+stack<treeNode*> anaStack;
 stack<tokenInfo> remainTok;
 int top;  //分析栈栈顶指针
 
@@ -340,77 +342,107 @@ void analyse() {
 
 	list<string> usedProduction;
 	list<string> usedProductionRight;
+
 	tokenInfo p;
 	p.content = "#";
-	
+	p.type = END;
+
+
+
 
 	//给remaintok赋值，读出词法分析结果
 	remainTok.push(p);
 	for (auto it = resultTok.rbegin(); it != resultTok.rend(); it++) {
-		
+
 		remainTok.push(*it);//在这里倒序插入了，所以栈顶的元素应该是最开始的那个符号
 
 	}
+
+
+	anaStack.push(new treeNode("END"));//#
+	treeNode* st =new treeNode(startToken);
+	st->childNum = 1;
+	anaStack.push(st);//首符号进栈
+	
+	treeNode* ttop = new treeNode();
+	ttop = st;
+	
 	
 	
 
-	
-	anaStack.push(startToken);//首符号进栈
 
-	for (int i = 0;;i++) {
+	//注意栈里面装的是一个一个的树节点，然后我自己定义的是指向树节点的指针
+	for (int i = 0;; i++) {
 
 		//如果分析栈和输入串都只剩下#,分析完成
-		if (anaStack.top()=="#" && remainTok.top().content == "#") {
+		if (anaStack.top()->tokenStr == "END" && remainTok.top().content == "#") {
 			cout << "语法分析完成" << endl;
 			break;
 		}
-		else if (nonterminalSym.find(anaStack.top()) != nonterminalSym.end()) {
+		else if (nonterminalSym.find(anaStack.top()->tokenStr) != nonterminalSym.end()) {
 			//如果分析栈顶是非终结符
 			//检测预测表中是否有产生式匹配子串栈的栈顶
 			//前提子串栈顶是个终结符，如果满足条件且找到了
-			if (terminalSym.find(EToString(remainTok.top().type)) != terminalSym.end() && predictionTable[anaStack.top()].find(EToString(remainTok.top().type)) != predictionTable[anaStack.top()].end()) 
+
+			if (terminalSym.find(EToString(remainTok.top().type)) != terminalSym.end() && predictionTable[anaStack.top()->tokenStr].find(EToString(remainTok.top().type)) != predictionTable[anaStack.top()->tokenStr].end())
 			{
-				cout << "action:" << predictionTable[anaStack.top()][EToString(remainTok.top().type)] << endl << endl;
+				cout << "action:" << predictionTable[anaStack.top()->tokenStr][EToString(remainTok.top().type)] << endl << endl;
 				//获取产生式右部
-				usedProduction = split(predictionTable[anaStack.top()][EToString(remainTok.top().type)], ":= ");
+				usedProduction = split(predictionTable[anaStack.top()->tokenStr][EToString(remainTok.top().type)], ":= ");
 				list<string>::iterator ite = usedProduction.begin();
 				ite++;
 				//获取右部的每一项
 				usedProductionRight = split(*ite, " ");
-
+				//这个地方注意了，tmp是一个treenode指针，然后anastack里面是一个个的treenode
+				int count = usedProductionRight.size();
+				ttop = anaStack.top();
+				ttop->childNum = count;
+				int j = 0;
+				
+				
+				
 				//分析栈弹出并且将产生式右部进栈
 				anaStack.pop();
-				for (auto ite = usedProductionRight.rbegin(); ite != usedProductionRight.rend(); ite++ ) {
-					//从右向左读入产生式，并将其入栈，符合之前的习惯,如果是空的话就不进栈
-					if ((*ite) != "$") {
-						anaStack.push(*ite);
+				//这个循环是为了进栈
+				for (auto ite = usedProductionRight.rbegin(); ite != usedProductionRight.rend(); ite++) {
+					treeNode*tmp = new treeNode(*ite);
+					ttop->children[j] = tmp;
+					j++;
+					if ((tmp->tokenStr) != "$") {
+
+						anaStack.push(tmp);
+
 					}
 				}
+			
+					
 
+				
 			}
 			else {
-				cout << "错误！当前token不可被识别:" << "位于程序第" << remainTok.top().line << "行的" << remainTok.top().content << endl << endl;
-				break;
+					cout << "错误！当前token不可被识别:" << "位于程序第" << remainTok.top().Line << "行的" << remainTok.top().content << endl << endl;
+					break;
+				}
+			}
+			else if (terminalSym.find(anaStack.top()->tokenStr) != terminalSym.end()) {
+				//如果分析栈栈顶是终结符
+				//如果子串栈顶的元素还是终结符，查看是否可以匹配
+				if (anaStack.top()->tokenStr == EToString(remainTok.top().type)) {
+					//如果可以匹配了,弹出
+					anaStack.pop();
+					//剩余串的指针后移一个
+					remainTok.pop();
+					cout << "匹配：" << remainTok.top().content << endl;
+				}
+				else {
+					//分析栈栈顶是终结符并且还不可以匹配
+					cout << "出现错误：位于程序第" << remainTok.top().Line << "行的" << remainTok.top().content << endl;
+					break;
+				}
 			}
 		}
-		else if (terminalSym.find(anaStack.top()) != terminalSym.end()) {
-			//如果分析栈栈顶是终结符
-			//如果子串栈顶的元素还是终结符，查看是否可以匹配
-			if (anaStack.top()== EToString(remainTok.top().type)) {
-				//如果可以匹配了,弹出
-				anaStack.pop();
-				//剩余串的指针后移一个
-				remainTok.pop(); 
-				cout << "匹配：" << remainTok.top().content << endl;
-			}
-			else {
-				//分析栈栈顶是终结符并且还不可以匹配
-				cout << "出现错误：位于程序第" << remainTok.top().line << "行的" << remainTok.top().content << endl;
-				break;
-			}
-		}
+	saveTree(st, setFile);
 	}
-}
 
 
 

@@ -1,5 +1,6 @@
 #include "token.h"
 #include "lex.h"
+
 int line;
 errorNode *herr=new errorNode();
 
@@ -49,6 +50,7 @@ int main() {
 		getSelectSet();
 		getPredictTable();
 		analyse();
+
 
 	}
 

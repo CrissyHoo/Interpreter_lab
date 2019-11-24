@@ -7,7 +7,12 @@ line comment:/
 3    // piece one
 line comment:/
 
-4 
+4 int main(){
+Reserved Word: int
+Identifier: main
+Bound Symbol: (
+Bound Symbol: )
+Bound Symbol: {
 
 5    int a[3];
 Reserved Word: int
@@ -45,7 +50,7 @@ Operator: -
 integer:23
 Bound Symbol: ;
 
-12 	int a[3] = { 1,3,4,8 }
+12 	int a[3] = { 1,3,4,8 };
 Reserved Word: int
 Identifier: a
 Bound Symbol: [
@@ -61,14 +66,9 @@ integer:4
 Bound Symbol: ,
 integer:8
 Bound Symbol: }
-
-13 	{b};
-Bound Symbol: {
-Identifier: b
-Bound Symbol: }
 Bound Symbol: ;
 
-14         if( a>b){ a        ;
+13         if( a>b){ a        ;
 Reserved Word: if
 Bound Symbol: (
 Identifier: a
@@ -78,19 +78,23 @@ Bound Symbol: {
 Identifier: a
 Bound Symbol: ;
 
-15         }
+14         }
 Bound Symbol: }
 
-16         {
+15         else{
+Reserved Word: else
 Bound Symbol: {
 
-17           236 * 1+ 345/(23 * 34) - 2346/ (31- 31) =xx
+16           xx=236 * 1+ 345/(23 * 34) - 2346/ (31- 31) ;
+Identifier: xx
+Operator: =
 integer:236
 Operator: *
 integer:1
 Operator: +
 integer:345
 Operator: /
+Bound Symbol: (
 integer:23
 Operator: *
 integer:34
@@ -103,24 +107,22 @@ integer:31
 Operator: -
 integer:31
 Bound Symbol: )
-Operator: =
-Identifier: xx
+Bound Symbol: ;
 
-18           }
+17           }
 Bound Symbol: }
 
-19    
-Unknown Token:
+18 		  
 
-20 
+19 }
+Bound Symbol: }
 
-21    // piece three
+20    // piece three
 line comment:/
 
-22    {
-Bound Symbol: {
+21    
 
-23         int a ;float b =0.234;
+22         int a ;float b =0.234;
 Reserved Word: int
 Identifier: a
 Bound Symbol: ;
@@ -130,16 +132,15 @@ Operator: =
 real number:0.234
 Bound Symbol: ;
 
-24 	{
-Bound Symbol: {
+23 	
 
-25 	{	a_b_c_d_e____1== 0126.120
-Bound Symbol: {
+24 		a_b_c_d_e____1= 0126.120;
 Identifier: a_b_c_d_e____1
-Operator: ==
+Operator: =
 real number:0126.120
+Bound Symbol: ;
 
-26         while (a >+234){
+25         while (a >+234){
 Reserved Word: while
 Bound Symbol: (
 Identifier: a
@@ -148,7 +149,7 @@ integer:234
 Bound Symbol: )
 Bound Symbol: {
 
-27               b = b - 1 - a;
+26               b = b - 1 - a;
 Identifier: b
 Operator: =
 Identifier: b
@@ -158,59 +159,55 @@ Operator: -
 Identifier: a
 Bound Symbol: ;
 
-28               while( b )
+27               while( b==a )
 Reserved Word: while
 Bound Symbol: (
 Identifier: b
+Operator: ==
+Identifier: a
 Bound Symbol: )
 
-29 		{
+28 		{
 Bound Symbol: {
 
-30                     real c = 123;
-Identifier: real
+29                     float c = 123;
+Reserved Word: float
 Identifier: c
 Operator: =
 integer:123
 Bound Symbol: ;
 
-31                     2343 
-integer:2343
-integer:
-
-32 		= b - 23;
-Operator: =
+30                     b=2343; 
 Identifier: b
-Operator: -
-integer:23
+Operator: =
+integer:2343
 Bound Symbol: ;
 
-33                     b = 
+31 		
+
+32                     b = 
 Identifier: b
 Operator: =
-Operator: 
 
-34 		- 14.1238675;
+33 		- 14.1238675;
 Operator: -
 real number:14.1238675
 Bound Symbol: ;
 
-35                     
-Unknown Token:
+34                     
 
-36              }
+35              }
 Bound Symbol: }
 
-37        }
+36        }
 Bound Symbol: }
 
-38    }
-Bound Symbol: }
+37    
 
-39 
+38 
 
-40 /* you should pass all the test case before you start expr1 checking !! */
+39 /* you should pass all the test case before you start expr1 checking !! */
 multipul lines comment:/
 
-41 
+40 
 

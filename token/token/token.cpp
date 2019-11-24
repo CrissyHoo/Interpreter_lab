@@ -79,7 +79,7 @@ void getToken(string ss) {
 			
 			
 			save = true;
-			tmp.line = line;
+			tmp.Line = line;
 
 			switch (state)
 			{
@@ -140,6 +140,7 @@ void getToken(string ss) {
 				{
 					if (c == ';') {
 						currentToken = SEMI;
+						state = DONE;
 						
 					}
 					else if (c == ',') {
@@ -148,26 +149,32 @@ void getToken(string ss) {
 					}
 					else if (c == '(') {
 						currentToken = LEFT_BRA;
+						state = DONE;
 						
 					}
 					else if (c == ')') {
 						currentToken = RIGHT_BRA;
+						state = DONE;
 						
 					}
 					else if (c == '[') {
 						currentToken = LEFT_INDEX;
+						state = DONE;
 						
 					}
 					else if (c == ']') {
 						currentToken = RIGHT_INDEX;
+						state = DONE;
 						
 					}
 					else if (c== '{') {
 						currentToken = LEFT_BOUND;
+						state = DONE;
 						
 					}
 					else if (c == '}') {
 						currentToken = RIGHT_BOUND;
+						state = DONE;
 						
 					}
 					
@@ -180,11 +187,8 @@ void getToken(string ss) {
 					state = DONE;
 				}
 
-				if (ssIndex + 1 == ss.length()) {
-					//如果这个正好是一行的最末尾一个,当前的状态不可以再带到下一行的状态了。
-					//对于上述case当时为什么没有给currenttoken赋值我感到很迷惑
-					state = DONE;
-				}
+				
+
 			
 				break;
 			
@@ -194,13 +198,10 @@ void getToken(string ss) {
 				{
 					//如果该行最后一位不是数字,例如 23.
 					if (c == '.') {
-						if (ssIndex + 1 == ss.length()) {
-							state = DONE;
-							currentToken = ERROR;
-						}
-						else {
+						
+						
 							state = INREAL0;
-						}
+						
 					}
 					else {
 						ssIndex--;
@@ -211,21 +212,14 @@ void getToken(string ss) {
 					}
 				}
 				
-				if (ssIndex + 1 == ss.length()) {
-					//如果该行最后一位是数字
-					state = DONE;
-					currentToken = INT_NUM;
-				}
+			
 				break;
 			case INREAL0:
 				if (isdigit(c)) {
-					if (ssIndex + 1 == ss.length()) {
-						//如果该行最后一位是数字
-						state = DONE;
-					}
-					else {
+					
+					
 						state = INREAL;					
-					}
+					
 					currentToken = REAL_NUM;
 				}
 				else {
@@ -236,11 +230,7 @@ void getToken(string ss) {
 				}
 				break;
 			case INREAL:
-				if ((ssIndex + 1 == ss.length())&&isdigit(c)){
-					//如果已经到最后了,且当前也是个实数
-					state = DONE;
-					currentToken = REAL_NUM;
-				}
+				
 				if (!isdigit(c)) {
 					state = DONE;
 					save = false;
@@ -253,10 +243,7 @@ void getToken(string ss) {
 				{
 					state = INID;
 					currentToken = ID;
-					if (ssIndex + 1 == ss.length()) {
-						//如果已经结尾了
-						state = DONE;
-					}
+					
 				}
 				else {
 					ssIndex--;
@@ -288,22 +275,23 @@ void getToken(string ss) {
 				state = DONE;
 				save = false;
 				ssIndex--;
-				currentToken = DIV;
+				currentToken = MOD;
 				break;
 			case INDIV:
+				save = false;
 				if (c != '/'&&c != '*') {
-					save = false;
+					ssIndex--;
 					state = DONE;
 					currentToken = DIV;
 
 				}
 				else if(c=='/') {
-					save = false;
+					
 					state = INLINECOM;
 					currentToken = LINE_NOTE;
 				}
 				else if (c == '*') {
-					save = false;
+					
 					state = INMULCOM1;
 					currentToken = MULTI_NOTE;
 				}
@@ -407,7 +395,7 @@ void getToken(string ss) {
 		
 		if (state == DONE)
 		{
-			if (currentToken != MULTI_NOTE && currentToken != LINE_NOTE) {
+			if (currentToken != MULTI_NOTE && currentToken != LINE_NOTE&&tokenString!=" ") {
 				tmp.content = tokenString;
 				tmp.type = currentToken;
 				resultTok.push_back(tmp);

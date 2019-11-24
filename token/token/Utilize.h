@@ -9,7 +9,9 @@
 #include <set>
 #include <map>
 #include <stack>
+#define MAXCHILDREN 10
 using namespace std;
+extern int line;
 typedef enum {
 
 	INIT=0,//默认初始值
@@ -48,7 +50,9 @@ typedef enum {
 	//注释
 
 	LINE_NOTE,  //  //
-	MULTI_NOTE  //  /**/
+	MULTI_NOTE,  //  /**/
+
+	END
 
 }tokenType;
 //为了方便使用需要把enum转化成string
@@ -91,24 +95,23 @@ const string stokenType[]={
 	//注释
 
 	"LINE_NOTE",  //  //
-	"MULTI_NOTE"  //  /**/
+	"MULTI_NOTE",  //  /**/
+	"#"
 
 };
 string EToString(const tokenType eParam);
-
-
 
 //为语法分析设置的结构，存储每个token的信息
 struct tokenInfo {
 	tokenType type;
 	string content;
-	int line;//token所处位置
+	int Line;//token所处位置
 
 	//初始化函数
 	tokenInfo() {
 		type = INIT;
 		content = " ";
-		line = -1;
+		Line = line;
 	}
 };
 
@@ -148,6 +151,33 @@ typedef enum {
 
 }stateType;
 
+//本来想偷个懒的，但是还是逃不过画语法树
+struct treeNode {           //语法树节点
+	string content;         //token的内容
+	int type;               //类型,tokentype类型，enum整数
+	string tokenStr;        //以字符串形式表示的token
+	int Line;               //所在行数
+	int childNum;           //孩子数目
+	treeNode* children[MAXCHILDREN];//指向你的孩子
+	//为了便于将这些节点加入到分析栈中，需要一个构造函数
+	treeNode(string tokenS) {
+		tokenStr = tokenS;
+		childNum = 0;
+		Line = line;
+		for (int i = 0; i < MAXCHILDREN; i++) {
+			//必须分配内存and构建对象，不然就是野指针
+			children[i] = NULL;
+		}
+
+	}
+	treeNode() {
+		//构造函数，不做任何
+		Line = line;
+		childNum = 0;
+	}
+
+};
+
 //分割函数
 list<string> split(string &str, const string &pattern);
 void printToken(tokenType token, const char tokenString[]);
@@ -159,10 +189,11 @@ void saveFollow(map<string, set<string>> followSet, ofstream &out);
 void saveProductionSelect(map<int, set<string>> selectSet, ofstream &out);
 void savePredictionTable(map<string, map<string, string>> predictionTable, ofstream &out);
 void saveTokenRes(list<tokenInfo> resultTok, ofstream &out);
+void saveTree(const treeNode* head, ofstream &out);
 
 extern ofstream token_ana;
 extern list<tokenInfo> resultTok;
-extern int line;
+
 extern stateType state;
 extern bool hasError;
 extern list<errorNode> err;

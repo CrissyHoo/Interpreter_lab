@@ -1,5 +1,7 @@
 #include "Utilize.h"
+#include "lex.h"
 using namespace std;
+
 
 list<string> split(string &str,const string &pattern) {
 	//将文法右部的产生式分割成一个一个的符号,通过find函数来找到位置进行分割
@@ -94,7 +96,7 @@ void saveTokenRes(list<tokenInfo> resultTok, ofstream &out) {
 	out << "————————————————————————词法分析结果如下——————————————————————————" << endl;
 	if (out.is_open()) {
 		for (list<tokenInfo>::const_iterator it = resultTok.cbegin(); it != resultTok.cend(); it++) {
-			out << it->line << " " << it->type << " " << it->content<<endl;
+			out << it->Line << " " << it->type << " " << it->content<<endl;
 		}
 	}
 	out << endl << endl << endl;
@@ -226,4 +228,18 @@ void savePredictionTable(map<string, map<string, string>> predictionTable, ofstr
 string EToString(const tokenType eParam)
 {
 	return stokenType[eParam];
+}
+
+void saveTree(const treeNode* head, ofstream &out) {
+	
+	out << "树" << endl;
+	if (head->childNum != 0) 
+		
+		for (int i = 0; i < head->childNum; i++) {
+			if (head->children[i] != NULL) {
+				out << head->tokenStr << ":" << head->children[i]->tokenStr;
+				saveTree(head->children[i], out);
+			}
+		}
+	
 }

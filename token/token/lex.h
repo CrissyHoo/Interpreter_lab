@@ -1,6 +1,7 @@
 #pragma once
 #include"Utilize.h"
 #include "token.h"
+#define MAXTREENODE 1000
 using namespace std;
 struct production {
 	//这个结构用来存放产生式
@@ -17,3 +18,6 @@ void getPredictTable();
 void getFollowSet();
 void getSelectSet();
 void analyse();
+
+extern int top;
+extern treeNode *treeStack[MAXTREENODE];
