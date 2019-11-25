@@ -27,6 +27,9 @@
     <ClCompile Include="Utilize.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="semantic.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="token.h">
@@ -36,6 +39,9 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="Utilize.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="semantic.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

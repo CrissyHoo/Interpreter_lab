@@ -118,11 +118,13 @@
   <ItemGroup>
     <ClCompile Include="lex.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="semantic.cpp" />
     <ClCompile Include="token.cpp" />
     <ClCompile Include="Utilize.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="lex.h" />
+    <ClInclude Include="semantic.h" />
     <ClInclude Include="token.h" />
     <ClInclude Include="Utilize.h" />
   </ItemGroup>

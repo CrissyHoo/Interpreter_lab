@@ -362,6 +362,7 @@ void analyse() {
 	anaStack.push(new treeNode("END"));//#
 	treeNode* st =new treeNode(startToken);
 	st->childNum = 1;
+	st->type = START;
 	anaStack.push(st);//首符号进栈
 	
 	treeNode* ttop = new treeNode();
@@ -406,6 +407,7 @@ void analyse() {
 				//这个循环是为了进栈
 				for (auto ite = usedProductionRight.rbegin(); ite != usedProductionRight.rend(); ite++) {
 					treeNode*tmp = new treeNode(*ite);
+					
 					ttop->children[j] = tmp;
 					j++;
 					if ((tmp->tokenStr) != "$") {
@@ -428,6 +430,7 @@ void analyse() {
 				//如果分析栈栈顶是终结符
 				//如果子串栈顶的元素还是终结符，查看是否可以匹配
 				if (anaStack.top()->tokenStr == EToString(remainTok.top().type)) {
+					anaStack.top()->content = remainTok.top().content;
 					//如果可以匹配了,弹出
 					anaStack.pop();
 					//剩余串的指针后移一个

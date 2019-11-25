@@ -31,7 +31,6 @@ BB:= $
 AF:= ST AC
 ST:= scan
 ST:= print
-AF:= T V AC
 AF:= V AC
 AC:= ASSIGN L SEMI
 AC:= LEFT_BRA PL RIGHT_BRA SEMI
