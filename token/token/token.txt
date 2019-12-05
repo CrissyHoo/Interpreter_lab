@@ -7,12 +7,7 @@ line comment:/
 3    // piece one
 line comment:/
 
-4 int main(){
-Reserved Word: int
-Identifier: main
-Bound Symbol: (
-Bound Symbol: )
-Bound Symbol: {
+4 
 
 5    int a[3];
 Reserved Word: int
@@ -114,8 +109,7 @@ Bound Symbol: }
 
 18 		  
 
-19 }
-Bound Symbol: }
+19 
 
 20    // piece three
 line comment:/
@@ -199,15 +193,17 @@ Bound Symbol: ;
 35              }
 Bound Symbol: }
 
-36        }
+36 			 }
 Bound Symbol: }
 
-37    
+37        
 
-38 
+38    
 
-39 /* you should pass all the test case before you start expr1 checking !! */
+39 
+
+40 /* you should pass all the test case before you start expr1 checking !! */
 multipul lines comment:/
 
-40 
+41 
 

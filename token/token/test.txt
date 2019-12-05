@@ -1,7 +1,7 @@
 // PART SIX: comprehensive analysis
    // here are some code adapted from C which is completely lexically legal.
    // piece one
-int main(){
+
    int a[3];
    a = 234;
    b = sdf_234df;
@@ -16,7 +16,7 @@ int main(){
           xx=236 * 1+ 345/(23 * 34) - 2346/ (31- 31) ;
           }
 		  
-}
+
    // piece three
    
         int a ;float b =0.234;
@@ -33,7 +33,8 @@ int main(){
 		- 14.1238675;
                     
              }
-       }
+			 }
+       
    
 
 /* you should pass all the test case before you start expr1 checking !! */

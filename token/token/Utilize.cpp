@@ -230,6 +230,92 @@ string EToString(const tokenType eParam)
 	return stokenType[eParam];
 }
 
+tokenType str2Token(string s) {
+	//由于只需要符号的，所以只写一个符号的
+	if (s == "PLUS") {
+		return PLUS;
+	}
+	else if (s == "MINUS") {
+		return MINUS;
+	}
+	else if (s == "MUL") {
+		return MUL;
+	}
+	else if (s == "DIV") {
+		return DIV;
+	}
+	else if (s == "MOD") {
+		return MOD;
+	}
+	else if (s == "GRT") {
+		return GRT;
+	}
+	else if(s=="GRT_EQU")
+	{
+		return GRT_EQU;
+	}
+	else if (s == "LES") {
+		return LES;
+	}
+	else if (s == "LES_EQU") {
+		return LES_EQU;
+	}
+	else if (s == "EQU") {
+		return EQU;
+	}
+	else if (s == "NOT_EQU") {
+		return NOT_EQU;
+	}
+	else {
+		cout << "error:the expression may have mistakes." << endl;
+	}
+}
+
+int getPerior(tokenType s)
+{
+	if (s == PLUS) {
+		return 1;
+	}
+	else if (s == MINUS) {
+		return 1;
+	}
+	else if (s == MUL) {
+		return 2;
+	}
+	else if (s == DIV) {
+		return 2;
+	}
+	else if (s == MOD) {
+		return 2;
+	}
+	else if (s == GRT) {
+		return 3;
+	}
+	else if (s == GRT_EQU)
+	{
+		return 3;
+	}
+	else if (s == LES) {
+		return 3;
+	}
+	else if (s == LES_EQU) {
+		return 3;
+	}
+	else if (s == EQU) {
+		return 3;
+	}
+	else if (s == NOT_EQU) {
+		return 3;
+	}
+	else if (s == LEFT_BRA) {
+		return 4;
+	}
+	else {
+		return -1;
+	}
+	
+}
+
 void saveTree(const treeNode* head, ofstream &out) {
 	
 	out << "树" << endl;
@@ -242,4 +328,21 @@ void saveTree(const treeNode* head, ofstream &out) {
 			}
 		}
 	
+}
+
+void convert2Num(string s, string type,value*va)
+{
+	stringstream ss;
+	ss << s;
+	//因为大多数都是通过string来传递的，所以使用一个函数来写比较方便
+	if (type == "int") {
+		int i;
+		ss >> i;
+		va->setIntValue(i);
+	}
+	else if (type == "double") {
+		double i;
+		ss >> i;
+		va->setDouValue(i);
+	}
 }

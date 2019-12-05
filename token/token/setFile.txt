@@ -1,9 +1,4 @@
 ————————————————————————词法分析结果如下——————————————————————————
-4 5 int
-4 9 main
-4 22 (
-4 23 )
-4 26 {
 5 5 int
 5 9 a
 5 24 [
@@ -74,7 +69,6 @@
 16 23 )
 16 30 ;
 17 27 }
-19 27 }
 22 5 int
 22 9 a
 22 30 ;
@@ -131,7 +125,6 @@
 ————————————————————————文法非终结符如下——————————————————————————
 AC
 AF
-B
 BB
 C
 CB
@@ -151,14 +144,10 @@ N
 NB
 O
 OE
-P
-PB
-PL
 Q
 QB
 QBB
 S
-SS
 ST
 T
 V
@@ -168,12 +157,12 @@ WLB
 
 
 ————————————————————————文法终结符如下————————————————————————
-#
 $
 ASSIGN
 COMMA
 DIV
 ELSE
+END
 EQU
 GRT
 GRT_EQU
@@ -200,18 +189,15 @@ SEMI
 WHILE
 print
 scan
-string
 
 
 
 ————————————————————————文法符号的first集如下————————————————————————
-# --- {#}
 $ --- {$}
-AC --- {ASSIGN,LEFT_BRA,SEMI}
-AF --- {ID,INT,REAL,print,scan}
+AC --- {ASSIGN,SEMI}
+AF --- {ID,print,scan}
 ASSIGN --- {ASSIGN}
-B --- {$,ID,IF,INT,REAL,WHILE,print,scan}
-BB --- {$,ID,IF,INT,REAL,WHILE,print,scan}
+BB --- {$,ID,IF,WHILE,print,scan}
 C --- {IF}
 CB --- {LEFT_BRA}
 CF --- {LEFT_BOUND}
@@ -221,6 +207,7 @@ DIV --- {DIV}
 E --- {$,DIV,ID,INT_NUM,LEFT_BRA,MINUS,MOD,MUL,PLUS,REAL_NUM}
 EL --- {$,ELSE}
 ELSE --- {ELSE}
+END --- {END}
 EQU --- {EQU}
 F --- {$,ID,INT_NUM,LEFT_BRA,REAL_NUM}
 FR --- {$,DIV,MOD,MUL}
@@ -249,9 +236,6 @@ NB --- {$,COMMA}
 NOT_EQU --- {NOT_EQU}
 O --- {EQU,GRT,GRT_EQU,LES,LES_EQU,NOT_EQU}
 OE --- {DIV,EQU,GRT,GRT_EQU,ID,INT_NUM,LEFT_BRA,LES,LES_EQU,MINUS,MOD,MUL,NOT_EQU,PLUS,REAL_NUM}
-P --- {ID,INT_NUM,REAL_NUM,string}
-PB --- {$,COMMA}
-PL --- {$,ID,INT_NUM,REAL_NUM,string}
 PLUS --- {PLUS}
 Q --- {INT,REAL}
 QB --- {INT,REAL}
@@ -263,7 +247,6 @@ RIGHT_BRA --- {RIGHT_BRA}
 RIGHT_INDEX --- {RIGHT_INDEX}
 S --- {$,ID,IF,INT,REAL,WHILE,print,scan}
 SEMI --- {SEMI}
-SS --- {string}
 ST --- {print,scan}
 T --- {INT,REAL}
 V --- {ID}
@@ -272,13 +255,11 @@ WL --- {WHILE}
 WLB --- {LEFT_BRA}
 print --- {print}
 scan --- {scan}
-string --- {string}
 
 
 
 ————————————————————————文法产生式的first集如下————————————————————————
-S:= B --- {$,ID,IF,INT,REAL,WHILE,print,scan}
-B:= QBB BB --- {$,ID,IF,INT,REAL,WHILE,print,scan}
+S:= QBB BB --- {$,ID,IF,INT,REAL,WHILE,print,scan}
 QBB:= QB QBB --- {INT,REAL}
 QBB:= $ --- {$}
 QB:= Q SEMI --- {INT,REAL}
@@ -303,18 +284,15 @@ L:= LEFT_BOUND MN RIGHT_BOUND --- {LEFT_BOUND}
 MN:= N NB --- {INT_NUM,REAL_NUM}
 NB:= COMMA N NB --- {COMMA}
 NB:= $ --- {$}
-BB:= AF B --- {ID,INT,REAL,print,scan}
-BB:= WL B --- {WHILE}
-BB:= C B --- {IF}
+BB:= AF S --- {ID,print,scan}
+BB:= WL S --- {WHILE}
+BB:= C S --- {IF}
 BB:= $ --- {$}
 AF:= ST AC --- {print,scan}
 ST:= scan --- {scan}
 ST:= print --- {print}
-AF:= T V AC --- {INT,REAL}
 AF:= V AC --- {ID}
 AC:= ASSIGN L SEMI --- {ASSIGN}
-AC:= LEFT_BRA PL RIGHT_BRA SEMI --- {LEFT_BRA}
-AC:= LEFT_BRA PL RIGHT_BRA CF --- {LEFT_BRA}
 AC:= SEMI --- {SEMI}
 T:= INT --- {INT}
 T:= REAL --- {REAL}
@@ -324,15 +302,7 @@ D:= LEFT_INDEX F RIGHT_INDEX --- {LEFT_INDEX}
 D:= $ --- {$}
 N:= INT_NUM --- {INT_NUM}
 N:= REAL_NUM --- {REAL_NUM}
-CF:= LEFT_BOUND B RIGHT_BOUND --- {LEFT_BOUND}
-PL:= P PB --- {ID,INT_NUM,REAL_NUM,string}
-PL:= $ --- {$}
-PB:= COMMA P PB --- {COMMA}
-PB:= $ --- {$}
-P:= I --- {ID}
-P:= N --- {INT_NUM,REAL_NUM}
-P:= SS --- {string}
-SS:= string --- {string}
+CF:= LEFT_BOUND S RIGHT_BOUND --- {LEFT_BOUND}
 OE:= E O E --- {DIV,EQU,GRT,GRT_EQU,ID,INT_NUM,LEFT_BRA,LES,LES_EQU,MINUS,MOD,MUL,NOT_EQU,PLUS,REAL_NUM}
 O:= LES --- {LES}
 O:= LES_EQU --- {LES_EQU}
@@ -350,19 +320,18 @@ EL:= $ --- {$}
 
 
 ————————————————————————非终结符的follow集如下————————————————————————
-AC --- {#,ID,IF,INT,REAL,RIGHT_BOUND,WHILE,print,scan}
-AF --- {#,ID,IF,INT,REAL,RIGHT_BOUND,WHILE,print,scan}
-B --- {#,RIGHT_BOUND}
-BB --- {#,RIGHT_BOUND}
-C --- {#,ID,IF,INT,REAL,RIGHT_BOUND,WHILE,print,scan}
-CB --- {#,ID,IF,INT,REAL,RIGHT_BOUND,WHILE,print,scan}
-CF --- {#,ELSE,ID,IF,INT,REAL,RIGHT_BOUND,WHILE,print,scan}
-D --- {ASSIGN,DIV,EQU,GRT,GRT_EQU,LEFT_BRA,LES,LES_EQU,MINUS,MOD,MUL,NOT_EQU,PLUS,RIGHT_BRA,RIGHT_INDEX,SEMI}
+AC --- {END,ID,IF,INT,REAL,RIGHT_BOUND,WHILE,print,scan}
+AF --- {END,ID,IF,INT,REAL,RIGHT_BOUND,WHILE,print,scan}
+BB --- {END,RIGHT_BOUND}
+C --- {END,ID,IF,INT,REAL,RIGHT_BOUND,WHILE,print,scan}
+CB --- {END,ID,IF,INT,REAL,RIGHT_BOUND,WHILE,print,scan}
+CF --- {ELSE,END,ID,IF,INT,REAL,RIGHT_BOUND,WHILE,print,scan}
+D --- {ASSIGN,DIV,EQU,GRT,GRT_EQU,LES,LES_EQU,MINUS,MOD,MUL,NOT_EQU,PLUS,RIGHT_BRA,RIGHT_INDEX,SEMI}
 E --- {EQU,GRT,GRT_EQU,LES,LES_EQU,NOT_EQU,RIGHT_BRA,SEMI}
-EL --- {#,ID,IF,INT,REAL,RIGHT_BOUND,WHILE,print,scan}
+EL --- {END,ID,IF,INT,REAL,RIGHT_BOUND,WHILE,print,scan}
 F --- {DIV,EQU,GRT,GRT_EQU,LES,LES_EQU,MINUS,MOD,MUL,NOT_EQU,PLUS,RIGHT_BRA,RIGHT_INDEX,SEMI}
 FR --- {EQU,GRT,GRT_EQU,LES,LES_EQU,MINUS,NOT_EQU,PLUS,RIGHT_BRA,SEMI}
-I --- {ASSIGN,COMMA,DIV,EQU,GRT,GRT_EQU,LEFT_BRA,LEFT_INDEX,LES,LES_EQU,MINUS,MOD,MUL,NOT_EQU,PLUS,RIGHT_BRA,RIGHT_INDEX,SEMI}
+I --- {ASSIGN,DIV,EQU,GRT,GRT_EQU,LEFT_INDEX,LES,LES_EQU,MINUS,MOD,MUL,NOT_EQU,PLUS,RIGHT_BRA,RIGHT_INDEX,SEMI}
 IN --- {SEMI}
 IT --- {EQU,GRT,GRT_EQU,LES,LES_EQU,MINUS,NOT_EQU,PLUS,RIGHT_BRA,SEMI}
 L --- {SEMI}
@@ -372,27 +341,22 @@ N --- {COMMA,DIV,EQU,GRT,GRT_EQU,LES,LES_EQU,MINUS,MOD,MUL,NOT_EQU,PLUS,RIGHT_BO
 NB --- {RIGHT_BOUND}
 O --- {DIV,ID,INT_NUM,LEFT_BRA,MINUS,MOD,MUL,PLUS,REAL_NUM,RIGHT_BRA}
 OE --- {RIGHT_BRA}
-P --- {COMMA,RIGHT_BRA}
-PB --- {RIGHT_BRA}
-PL --- {RIGHT_BRA}
 Q --- {SEMI}
-QB --- {#,ID,IF,INT,REAL,RIGHT_BOUND,WHILE,print,scan}
-QBB --- {#,ID,IF,INT,REAL,RIGHT_BOUND,WHILE,print,scan}
-S --- {#}
-SS --- {COMMA,RIGHT_BRA}
-ST --- {ASSIGN,LEFT_BRA,SEMI}
+QB --- {END,ID,IF,INT,REAL,RIGHT_BOUND,WHILE,print,scan}
+QBB --- {END,ID,IF,RIGHT_BOUND,WHILE,print,scan}
+S --- {END,RIGHT_BOUND}
+ST --- {ASSIGN,SEMI}
 T --- {ID}
-V --- {ASSIGN,DIV,EQU,GRT,GRT_EQU,LEFT_BRA,LES,LES_EQU,MINUS,MOD,MUL,NOT_EQU,PLUS,RIGHT_BRA,RIGHT_INDEX,SEMI}
-WL --- {#,ID,IF,INT,REAL,RIGHT_BOUND,WHILE,print,scan}
-WLB --- {#,ID,IF,INT,REAL,RIGHT_BOUND,WHILE,print,scan}
+V --- {ASSIGN,DIV,EQU,GRT,GRT_EQU,LES,LES_EQU,MINUS,MOD,MUL,NOT_EQU,PLUS,RIGHT_BRA,RIGHT_INDEX,SEMI}
+WL --- {END,ID,IF,INT,REAL,RIGHT_BOUND,WHILE,print,scan}
+WLB --- {END,ID,IF,INT,REAL,RIGHT_BOUND,WHILE,print,scan}
 
 
 
 ————————————————————————产生式的select集如下————————————————————————
-S:= B --- {#,ID,IF,INT,REAL,WHILE,print,scan}
-B:= QBB BB --- {#,ID,IF,INT,REAL,RIGHT_BOUND,WHILE,print,scan}
+S:= QBB BB --- {END,ID,IF,INT,REAL,RIGHT_BOUND,WHILE,print,scan}
 QBB:= QB QBB --- {INT,REAL}
-QBB:= $ --- {#,ID,IF,INT,REAL,RIGHT_BOUND,WHILE,print,scan}
+QBB:= $ --- {END,ID,IF,RIGHT_BOUND,WHILE,print,scan}
 QB:= Q SEMI --- {INT,REAL}
 Q:= T V IN --- {INT,REAL}
 IN:= ASSIGN L --- {ASSIGN}
@@ -415,36 +379,25 @@ L:= LEFT_BOUND MN RIGHT_BOUND --- {LEFT_BOUND}
 MN:= N NB --- {INT_NUM,REAL_NUM}
 NB:= COMMA N NB --- {COMMA}
 NB:= $ --- {RIGHT_BOUND}
-BB:= AF B --- {ID,INT,REAL,print,scan}
-BB:= WL B --- {WHILE}
-BB:= C B --- {IF}
-BB:= $ --- {#,RIGHT_BOUND}
+BB:= AF S --- {ID,print,scan}
+BB:= WL S --- {WHILE}
+BB:= C S --- {IF}
+BB:= $ --- {END,RIGHT_BOUND}
 AF:= ST AC --- {print,scan}
 ST:= scan --- {scan}
 ST:= print --- {print}
-AF:= T V AC --- {INT,REAL}
 AF:= V AC --- {ID}
 AC:= ASSIGN L SEMI --- {ASSIGN}
-AC:= LEFT_BRA PL RIGHT_BRA SEMI --- {LEFT_BRA}
-AC:= LEFT_BRA PL RIGHT_BRA CF --- {LEFT_BRA}
 AC:= SEMI --- {SEMI}
 T:= INT --- {INT}
 T:= REAL --- {REAL}
 V:= I D --- {ID}
 I:= ID --- {ID}
 D:= LEFT_INDEX F RIGHT_INDEX --- {LEFT_INDEX}
-D:= $ --- {ASSIGN,DIV,EQU,GRT,GRT_EQU,LEFT_BRA,LES,LES_EQU,MINUS,MOD,MUL,NOT_EQU,PLUS,RIGHT_BRA,RIGHT_INDEX,SEMI}
+D:= $ --- {ASSIGN,DIV,EQU,GRT,GRT_EQU,LES,LES_EQU,MINUS,MOD,MUL,NOT_EQU,PLUS,RIGHT_BRA,RIGHT_INDEX,SEMI}
 N:= INT_NUM --- {INT_NUM}
 N:= REAL_NUM --- {REAL_NUM}
-CF:= LEFT_BOUND B RIGHT_BOUND --- {LEFT_BOUND}
-PL:= P PB --- {ID,INT_NUM,REAL_NUM,string}
-PL:= $ --- {RIGHT_BRA}
-PB:= COMMA P PB --- {COMMA}
-PB:= $ --- {RIGHT_BRA}
-P:= I --- {ID}
-P:= N --- {INT_NUM,REAL_NUM}
-P:= SS --- {string}
-SS:= string --- {string}
+CF:= LEFT_BOUND S RIGHT_BOUND --- {LEFT_BOUND}
 OE:= E O E --- {DIV,EQU,GRT,GRT_EQU,ID,INT_NUM,LEFT_BRA,LES,LES_EQU,MINUS,MOD,MUL,NOT_EQU,PLUS,REAL_NUM}
 O:= LES --- {LES}
 O:= LES_EQU --- {LES_EQU}
@@ -457,46 +410,31 @@ WLB:= LEFT_BRA OE RIGHT_BRA CF --- {LEFT_BRA}
 C:= IF CB --- {IF}
 CB:= LEFT_BRA OE RIGHT_BRA CF EL --- {LEFT_BRA}
 EL:= ELSE CF --- {ELSE}
-EL:= $ --- {#,ID,IF,INT,REAL,RIGHT_BOUND,WHILE,print,scan}
+EL:= $ --- {END,ID,IF,INT,REAL,RIGHT_BOUND,WHILE,print,scan}
 
 
 
 ————————————————————————预测分析表如下————————————————————————
 AC 遇到了 ASSIGN,采用产生式:AC:= ASSIGN L SEMI
-AC 遇到了 LEFT_BRA,采用产生式:AC:= LEFT_BRA PL RIGHT_BRA CF
 AC 遇到了 SEMI,采用产生式:AC:= SEMI
 AF 遇到了 ID,采用产生式:AF:= V AC
-AF 遇到了 INT,采用产生式:AF:= T V AC
-AF 遇到了 REAL,采用产生式:AF:= T V AC
 AF 遇到了 print,采用产生式:AF:= ST AC
 AF 遇到了 scan,采用产生式:AF:= ST AC
-B 遇到了 #,采用产生式:B:= QBB BB
-B 遇到了 ID,采用产生式:B:= QBB BB
-B 遇到了 IF,采用产生式:B:= QBB BB
-B 遇到了 INT,采用产生式:B:= QBB BB
-B 遇到了 REAL,采用产生式:B:= QBB BB
-B 遇到了 RIGHT_BOUND,采用产生式:B:= QBB BB
-B 遇到了 WHILE,采用产生式:B:= QBB BB
-B 遇到了 print,采用产生式:B:= QBB BB
-B 遇到了 scan,采用产生式:B:= QBB BB
-BB 遇到了 #,采用产生式:BB:= $
-BB 遇到了 ID,采用产生式:BB:= AF B
-BB 遇到了 IF,采用产生式:BB:= C B
-BB 遇到了 INT,采用产生式:BB:= AF B
-BB 遇到了 REAL,采用产生式:BB:= AF B
+BB 遇到了 END,采用产生式:BB:= $
+BB 遇到了 ID,采用产生式:BB:= AF S
+BB 遇到了 IF,采用产生式:BB:= C S
 BB 遇到了 RIGHT_BOUND,采用产生式:BB:= $
-BB 遇到了 WHILE,采用产生式:BB:= WL B
-BB 遇到了 print,采用产生式:BB:= AF B
-BB 遇到了 scan,采用产生式:BB:= AF B
+BB 遇到了 WHILE,采用产生式:BB:= WL S
+BB 遇到了 print,采用产生式:BB:= AF S
+BB 遇到了 scan,采用产生式:BB:= AF S
 C 遇到了 IF,采用产生式:C:= IF CB
 CB 遇到了 LEFT_BRA,采用产生式:CB:= LEFT_BRA OE RIGHT_BRA CF EL
-CF 遇到了 LEFT_BOUND,采用产生式:CF:= LEFT_BOUND B RIGHT_BOUND
+CF 遇到了 LEFT_BOUND,采用产生式:CF:= LEFT_BOUND S RIGHT_BOUND
 D 遇到了 ASSIGN,采用产生式:D:= $
 D 遇到了 DIV,采用产生式:D:= $
 D 遇到了 EQU,采用产生式:D:= $
 D 遇到了 GRT,采用产生式:D:= $
 D 遇到了 GRT_EQU,采用产生式:D:= $
-D 遇到了 LEFT_BRA,采用产生式:D:= $
 D 遇到了 LEFT_INDEX,采用产生式:D:= LEFT_INDEX F RIGHT_INDEX
 D 遇到了 LES,采用产生式:D:= $
 D 遇到了 LES_EQU,采用产生式:D:= $
@@ -525,8 +463,8 @@ E 遇到了 PLUS,采用产生式:E:= IT M
 E 遇到了 REAL_NUM,采用产生式:E:= IT M
 E 遇到了 RIGHT_BRA,采用产生式:E:= IT M
 E 遇到了 SEMI,采用产生式:E:= IT M
-EL 遇到了 #,采用产生式:EL:= $
 EL 遇到了 ELSE,采用产生式:EL:= ELSE CF
+EL 遇到了 END,采用产生式:EL:= $
 EL 遇到了 ID,采用产生式:EL:= $
 EL 遇到了 IF,采用产生式:EL:= $
 EL 遇到了 INT,采用产生式:EL:= $
@@ -634,39 +572,28 @@ OE 遇到了 MUL,采用产生式:OE:= E O E
 OE 遇到了 NOT_EQU,采用产生式:OE:= E O E
 OE 遇到了 PLUS,采用产生式:OE:= E O E
 OE 遇到了 REAL_NUM,采用产生式:OE:= E O E
-P 遇到了 ID,采用产生式:P:= I
-P 遇到了 INT_NUM,采用产生式:P:= N
-P 遇到了 REAL_NUM,采用产生式:P:= N
-P 遇到了 string,采用产生式:P:= SS
-PB 遇到了 COMMA,采用产生式:PB:= COMMA P PB
-PB 遇到了 RIGHT_BRA,采用产生式:PB:= $
-PL 遇到了 ID,采用产生式:PL:= P PB
-PL 遇到了 INT_NUM,采用产生式:PL:= P PB
-PL 遇到了 REAL_NUM,采用产生式:PL:= P PB
-PL 遇到了 RIGHT_BRA,采用产生式:PL:= $
-PL 遇到了 string,采用产生式:PL:= P PB
 Q 遇到了 INT,采用产生式:Q:= T V IN
 Q 遇到了 REAL,采用产生式:Q:= T V IN
 QB 遇到了 INT,采用产生式:QB:= Q SEMI
 QB 遇到了 REAL,采用产生式:QB:= Q SEMI
-QBB 遇到了 #,采用产生式:QBB:= $
+QBB 遇到了 END,采用产生式:QBB:= $
 QBB 遇到了 ID,采用产生式:QBB:= $
 QBB 遇到了 IF,采用产生式:QBB:= $
-QBB 遇到了 INT,采用产生式:QBB:= $
-QBB 遇到了 REAL,采用产生式:QBB:= $
+QBB 遇到了 INT,采用产生式:QBB:= QB QBB
+QBB 遇到了 REAL,采用产生式:QBB:= QB QBB
 QBB 遇到了 RIGHT_BOUND,采用产生式:QBB:= $
 QBB 遇到了 WHILE,采用产生式:QBB:= $
 QBB 遇到了 print,采用产生式:QBB:= $
 QBB 遇到了 scan,采用产生式:QBB:= $
-S 遇到了 #,采用产生式:S:= B
-S 遇到了 ID,采用产生式:S:= B
-S 遇到了 IF,采用产生式:S:= B
-S 遇到了 INT,采用产生式:S:= B
-S 遇到了 REAL,采用产生式:S:= B
-S 遇到了 WHILE,采用产生式:S:= B
-S 遇到了 print,采用产生式:S:= B
-S 遇到了 scan,采用产生式:S:= B
-SS 遇到了 string,采用产生式:SS:= string
+S 遇到了 END,采用产生式:S:= QBB BB
+S 遇到了 ID,采用产生式:S:= QBB BB
+S 遇到了 IF,采用产生式:S:= QBB BB
+S 遇到了 INT,采用产生式:S:= QBB BB
+S 遇到了 REAL,采用产生式:S:= QBB BB
+S 遇到了 RIGHT_BOUND,采用产生式:S:= QBB BB
+S 遇到了 WHILE,采用产生式:S:= QBB BB
+S 遇到了 print,采用产生式:S:= QBB BB
+S 遇到了 scan,采用产生式:S:= QBB BB
 ST 遇到了 print,采用产生式:ST:= print
 ST 遇到了 scan,采用产生式:ST:= scan
 T 遇到了 INT,采用产生式:T:= INT
@@ -678,48 +605,45 @@ WLB 遇到了 LEFT_BRA,采用产生式:WLB:= LEFT_BRA OE RIGHT_BRA CF
 
 
 树
-S:B树
-B:BB树
-BB:B树
-B:BB树
-BB:B树
-B:BB树
-BB:B树
-B:BB树
-BB:B树
-B:BB树
-BB:B树
-B:BB树
+S:BB树
+BB:S树
+S:BB树
+BB:S树
+S:BB树
+BB:S树
+S:BB树
+BB:S树
+S:BB树
+BB:S树
+S:BB树
 BB:$树
-B:QBB树
+S:QBB树
 QBB:$树
 BB:WL树
 WL:WLB树
 WLB:CF树
 CF:RIGHT_BOUND树
-CF:B树
-B:BB树
-BB:B树
-B:BB树
-BB:B树
-B:BB树
+CF:S树
+S:BB树
+BB:S树
+S:BB树
+BB:S树
+S:BB树
 BB:$树
-B:QBB树
+S:QBB树
 QBB:$树
 BB:WL树
 WL:WLB树
 WLB:CF树
 CF:RIGHT_BOUND树
-CF:B树
-B:BB树
-BB:B树
-B:BB树
-BB:B树
-B:BB树
-BB:B树
-B:BB树
+CF:S树
+S:BB树
+BB:S树
+S:BB树
+BB:S树
+S:BB树
 BB:$树
-B:QBB树
+S:QBB树
 QBB:$树
 BB:AF树
 AF:AC树
@@ -747,7 +671,7 @@ V:D树
 D:$树
 V:I树
 I:ID树
-B:QBB树
+S:QBB树
 QBB:$树
 BB:AF树
 AF:AC树
@@ -768,12 +692,14 @@ V:D树
 D:$树
 V:I树
 I:ID树
-B:QBB树
+S:QBB树
+QBB:QBB树
 QBB:$树
-BB:AF树
-AF:AC树
-AC:SEMI树
-AC:L树
+QBB:QB树
+QB:SEMI树
+QB:Q树
+Q:IN树
+IN:L树
 L:E树
 E:M树
 M:$树
@@ -783,16 +709,14 @@ FR:$树
 IT:F树
 F:N树
 N:INT_NUM树
-AC:ASSIGN树
-AF:V树
+IN:ASSIGN树
+Q:V树
 V:D树
 D:$树
 V:I树
 I:ID树
-AF:T树
+Q:T树
 T:REAL树
-B:QBB树
-QBB:$树
 CF:LEFT_BOUND树
 WLB:RIGHT_BRA树
 WLB:OE树
@@ -824,7 +748,7 @@ V:I树
 I:ID树
 WLB:LEFT_BRA树
 WL:WHILE树
-B:QBB树
+S:QBB树
 QBB:$树
 BB:AF树
 AF:AC树
@@ -867,7 +791,7 @@ V:D树
 D:$树
 V:I树
 I:ID树
-B:QBB树
+S:QBB树
 QBB:$树
 CF:LEFT_BOUND树
 WLB:RIGHT_BRA树
@@ -897,7 +821,7 @@ V:I树
 I:ID树
 WLB:LEFT_BRA树
 WL:WHILE树
-B:QBB树
+S:QBB树
 QBB:$树
 BB:AF树
 AF:AC树
@@ -918,12 +842,15 @@ V:D树
 D:$树
 V:I树
 I:ID树
-B:QBB树
+S:QBB树
+QBB:QBB树
+QBB:QBB树
 QBB:$树
-BB:AF树
-AF:AC树
-AC:SEMI树
-AC:L树
+QBB:QB树
+QB:SEMI树
+QB:Q树
+Q:IN树
+IN:L树
 L:E树
 E:M树
 M:$树
@@ -933,60 +860,37 @@ FR:$树
 IT:F树
 F:N树
 N:REAL_NUM树
-AC:ASSIGN树
-AF:V树
+IN:ASSIGN树
+Q:V树
 V:D树
 D:$树
 V:I树
 I:ID树
-AF:T树
+Q:T树
 T:REAL树
-B:QBB树
-QBB:$树
-BB:AF树
-AF:AC树
-AC:SEMI树
-AF:V树
+QBB:QB树
+QB:SEMI树
+QB:Q树
+Q:IN树
+IN:$树
+Q:V树
 V:D树
 D:$树
 V:I树
 I:ID树
-AF:T树
+Q:T树
 T:INT树
-B:QBB树
-QBB:$树
-BB:AF树
-AF:AC树
-AC:CF树
-CF:RIGHT_BOUND树
-CF:B树
-B:BB树
-BB:B树
-B:BB树
-BB:B树
-B:BB树
-BB:B树
-B:BB树
-BB:B树
-B:BB树
-BB:B树
-B:BB树
-BB:B树
-B:BB树
-BB:$树
-B:QBB树
-QBB:$树
 BB:C树
 C:CB树
 CB:EL树
 EL:CF树
 CF:RIGHT_BOUND树
-CF:B树
-B:BB树
-BB:B树
-B:BB树
+CF:S树
+S:BB树
+BB:S树
+S:BB树
 BB:$树
-B:QBB树
+S:QBB树
 QBB:$树
 BB:AF树
 AF:AC树
@@ -1069,18 +973,18 @@ V:D树
 D:$树
 V:I树
 I:ID树
-B:QBB树
+S:QBB树
 QBB:$树
 CF:LEFT_BOUND树
 EL:ELSE树
 CB:CF树
 CF:RIGHT_BOUND树
-CF:B树
-B:BB树
-BB:B树
-B:BB树
+CF:S树
+S:BB树
+BB:S树
+S:BB树
 BB:$树
-B:QBB树
+S:QBB树
 QBB:$树
 BB:AF树
 AF:AC树
@@ -1090,7 +994,7 @@ V:D树
 D:$树
 V:I树
 I:ID树
-B:QBB树
+S:QBB树
 QBB:$树
 CF:LEFT_BOUND树
 CB:RIGHT_BRA树
@@ -1119,12 +1023,15 @@ V:I树
 I:ID树
 CB:LEFT_BRA树
 C:IF树
-B:QBB树
+S:QBB树
+QBB:QBB树
+QBB:QBB树
 QBB:$树
-BB:AF树
-AF:AC树
-AC:SEMI树
-AC:L树
+QBB:QB树
+QB:SEMI树
+QB:Q树
+Q:IN树
+IN:L树
 L:RIGHT_BOUND树
 L:MN树
 MN:NB树
@@ -1144,8 +1051,8 @@ NB:COMMA树
 MN:N树
 N:INT_NUM树
 L:LEFT_BOUND树
-AC:ASSIGN树
-AF:V树
+IN:ASSIGN树
+Q:V树
 V:D树
 D:RIGHT_INDEX树
 D:F树
@@ -1154,14 +1061,13 @@ N:INT_NUM树
 D:LEFT_INDEX树
 V:I树
 I:ID树
-AF:T树
+Q:T树
 T:INT树
-B:QBB树
-QBB:$树
-BB:AF树
-AF:AC树
-AC:SEMI树
-AC:L树
+QBB:QB树
+QB:SEMI树
+QB:Q树
+Q:IN树
+IN:L树
 L:E树
 E:M树
 M:M树
@@ -1178,16 +1084,14 @@ IT:FR树
 FR:$树
 IT:F树
 F:$树
-AC:ASSIGN树
-AF:V树
+IN:ASSIGN树
+Q:V树
 V:D树
 D:$树
 V:I树
 I:ID树
-AF:T树
+Q:T树
 T:REAL树
-B:QBB树
-QBB:$树
 BB:AF树
 AF:AC树
 AC:SEMI树
@@ -1210,7 +1114,7 @@ V:D树
 D:$树
 V:I树
 I:ID树
-B:QBB树
+S:QBB树
 QBB:$树
 BB:AF树
 AF:AC树
@@ -1231,12 +1135,15 @@ V:D树
 D:$树
 V:I树
 I:ID树
-B:QBB树
+S:QBB树
+QBB:QBB树
 QBB:$树
-BB:AF树
-AF:AC树
-AC:SEMI树
-AF:V树
+QBB:QB树
+QB:SEMI树
+QB:Q树
+Q:IN树
+IN:$树
+Q:V树
 V:D树
 D:RIGHT_INDEX树
 D:F树
@@ -1245,21 +1152,5 @@ N:INT_NUM树
 D:LEFT_INDEX树
 V:I树
 I:ID树
-AF:T树
+Q:T树
 T:INT树
-B:QBB树
-QBB:$树
-CF:LEFT_BOUND树
-AC:RIGHT_BRA树
-AC:PL树
-PL:$树
-AC:LEFT_BRA树
-AF:V树
-V:D树
-D:$树
-V:I树
-I:ID树
-AF:T树
-T:INT树
-B:QBB树
-QBB:$树

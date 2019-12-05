@@ -131,7 +131,7 @@ void saveProduction(string grammarName) {
 		}
 
 	}
-	terminalSym.insert("#");
+	terminalSym.insert("END");
 	terminalSym.insert("$");    //空字
 
 	saveNoneTerminal(nonterminalSym, setFile);
@@ -215,7 +215,7 @@ void getProductionFirstset() {
 
 //求所有非终结符的follow集合
 void getFollowSet() {
-	followSet[startToken].insert("#");  //文法的开始符号的follow集中包含{#}
+	followSet[startToken].insert("END");  //文法的开始符号的follow集中包含{#}
 	int preSize;    //非终结符之前的follow集元素个数
 	int curSize;    //非终结符现在的follow集元素个数
 	bool changed;   //非终结符的follow集是否改变
@@ -344,12 +344,8 @@ void analyse() {
 	list<string> usedProductionRight;
 
 	tokenInfo p;
-	p.content = "#";
+	p.content = "END";
 	p.type = END;
-
-
-
-
 	//给remaintok赋值，读出词法分析结果
 	remainTok.push(p);
 	for (auto it = resultTok.rbegin(); it != resultTok.rend(); it++) {
@@ -362,7 +358,7 @@ void analyse() {
 	anaStack.push(new treeNode("END"));//#
 	treeNode* st =new treeNode(startToken);
 	st->childNum = 1;
-	st->type = START;
+	st->tokenStr = "S";
 	anaStack.push(st);//首符号进栈
 	
 	treeNode* ttop = new treeNode();
@@ -376,7 +372,7 @@ void analyse() {
 	for (int i = 0;; i++) {
 
 		//如果分析栈和输入串都只剩下#,分析完成
-		if (anaStack.top()->tokenStr == "END" && remainTok.top().content == "#") {
+		if (anaStack.top()->tokenStr == "END" && remainTok.top().content == "END") {
 			cout << "语法分析完成" << endl;
 			break;
 		}
@@ -385,7 +381,7 @@ void analyse() {
 			//检测预测表中是否有产生式匹配子串栈的栈顶
 			//前提子串栈顶是个终结符，如果满足条件且找到了
 
-			if (terminalSym.find(EToString(remainTok.top().type)) != terminalSym.end() && predictionTable[anaStack.top()->tokenStr].find(EToString(remainTok.top().type)) != predictionTable[anaStack.top()->tokenStr].end())
+			if (terminalSym.find(EToString(remainTok.top().type) )!= terminalSym.end() && predictionTable[anaStack.top()->tokenStr].find(EToString(remainTok.top().type)) != predictionTable[anaStack.top()->tokenStr].end())
 			{
 				cout << "action:" << predictionTable[anaStack.top()->tokenStr][EToString(remainTok.top().type)] << endl << endl;
 				//获取产生式右部
@@ -399,9 +395,6 @@ void analyse() {
 				ttop = anaStack.top();
 				ttop->childNum = count;
 				int j = 0;
-				
-				
-				
 				//分析栈弹出并且将产生式右部进栈
 				anaStack.pop();
 				//这个循环是为了进栈
@@ -410,7 +403,7 @@ void analyse() {
 					
 					ttop->children[j] = tmp;
 					j++;
-					if ((tmp->tokenStr) != "$") {
+					if (tmp->tokenStr != "$") {
 
 						anaStack.push(tmp);
 
@@ -430,7 +423,8 @@ void analyse() {
 				//如果分析栈栈顶是终结符
 				//如果子串栈顶的元素还是终结符，查看是否可以匹配
 				if (anaStack.top()->tokenStr == EToString(remainTok.top().type)) {
-					anaStack.top()->content = remainTok.top().content;
+					//这里子串栈的栈顶是一个终结符，终结符的type才能跟栈里面的content匹配
+					anaStack.top()->VTcontent = remainTok.top().content;//例如ID的话，这里是将具体的a存进treenode里
 					//如果可以匹配了,弹出
 					anaStack.pop();
 					//剩余串的指针后移一个

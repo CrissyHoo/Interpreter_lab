@@ -1,9 +1,8 @@
 ﻿C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Common7\IDE\VC\VCTargets\Microsoft.CppBuild.targets(391,5): warning MSB8028: 中间目录(Debug\)包含从另一个项目(token.vcxproj)共享的文件。   这会导致错误的清除和重新生成行为。
-  lex.cpp
-c:\users\judyhu\source\repos\interpreterlab\token\token\lex.cpp(125): warning C4018: “<”: 有符号/无符号不匹配
-c:\users\judyhu\source\repos\interpreterlab\token\token\lex.cpp(159): warning C4018: “<”: 有符号/无符号不匹配
-c:\users\judyhu\source\repos\interpreterlab\token\token\lex.cpp(192): warning C4018: “<”: 有符号/无符号不匹配
-c:\users\judyhu\source\repos\interpreterlab\token\token\lex.cpp(229): warning C4018: “<”: 有符号/无符号不匹配
-c:\users\judyhu\source\repos\interpreterlab\token\token\lex.cpp(235): warning C4018: “<”: 有符号/无符号不匹配
-c:\users\judyhu\source\repos\interpreterlab\token\token\lex.cpp(291): warning C4101: “j”: 未引用的局部变量
+  semantic.cpp
+c:\users\judyhu\source\repos\interpreterlab\token\token\semantic.cpp(122): warning C4018: “>=”: 有符号/无符号不匹配
+c:\users\judyhu\source\repos\interpreterlab\token\token\semantic.cpp(160): warning C4018: “>=”: 有符号/无符号不匹配
+c:\users\judyhu\source\repos\interpreterlab\token\token\semantic.cpp(201): warning C4715: “isOperator”: 不是所有的控件路径都返回值
+c:\users\judyhu\source\repos\interpreterlab\token\token\utilize.h(177): warning C4715: “symbolArr::searchTa”: 不是所有的控件路径都返回值
+c:\users\judyhu\source\repos\interpreterlab\token\token\utilize.h(190): warning C4715: “symbolArr::searchArr”: 不是所有的控件路径都返回值
   token.vcxproj -> C:\Users\JudyHu\source\repos\interpreterLab\token\Debug\interpreter.exe

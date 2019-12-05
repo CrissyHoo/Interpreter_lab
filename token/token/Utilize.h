@@ -9,6 +9,7 @@
 #include <set>
 #include <map>
 #include <stack>
+#include <sstream>
 #define MAXCHILDREN 10
 using namespace std;
 extern int line;
@@ -51,23 +52,38 @@ typedef enum {
 
 	LINE_NOTE,  //  //
 	MULTI_NOTE,  //  /**/
-
-	START,//开始
 	END
 
 }tokenType;
 
 //下面是语义分析用到的
 #define MAX 65536
-//定义一个value类,返回表达式计算的结果
+//定义一个value类,返回表达式计算的结果,他的作用就是一个过渡器，得到的结果再进一步给到symbol里面
 class value {
 public:
 	const int INTTYPE = 0;
 	const int REALTYPE = 1;
-	const int TRUETYPE = 2;
+	const int TRUETYPE = 2;//布尔值
 	const int FALSETYPE = 3;
 	int getType() {
 		return this->type;
+	}
+	void setType(int TYPE) {
+		this->type = TYPE;
+	}
+
+	void setIntValue(int i) {
+		this->mint = i;
+	}
+	int getIntValue() {
+		return this->mint;
+	}
+
+	void setDouValue(double j) {
+		this->mfloat = j;
+	}
+	double getDouValue() {
+		return this->mfloat;
 	}
 	
 private:
@@ -76,38 +92,30 @@ private:
 	int mint;
 	
 };
-class valueArr {
-	//我们用list来代表符号表，分为普通的符号表和存储数组的符号表，具体的以后再说
-public:
-	list<symbol> table;
-	list<symbol> arrTable;
-	//需要有一个查找元素的操作,根据id的值返回对应的那个元素
-	symbol search(string name, int level) {//暂时把level看成是一个表示声明层次（或者说代码层次）的一个变量
-		
-		for (list<symbol>::iterator it = table.begin(); it != table.end(); it++) {
-			if ((*it).getName() == name && level == (*it).getLevel()) {
-				return *it;
-				
-			}
-			
-		}
 
-	}
-};
-//定义的symbol类，专门用来存储符号
+//定义的symbol类，专门用来存储单个符号结构
 class symbol {
 public:
 	const int INTTYPE = 0;
 	const int REALTYPE = 1;
-	
+
 	void setLevel(int lev) {
 		this->level = lev;
 	}
 	void setType(int ty) {
 		this->type = ty;
 	}
+	int getType() {
+		return this->type;
+	}
 	void setName(string s) {
 		this->name = s;
+	}
+	void addVecInt(int tmp) {
+		this->intA.push_back(tmp);
+	}
+	void addVecDou(double db) {
+		this->douA.push_back(db);
 	}
 	string getName() {
 		return this->name;
@@ -115,16 +123,76 @@ public:
 	int getLevel() {
 		return this->level;
 	}
+	int getIntV() {
+		return this->intValue;
+	}
+	double getDouV() {
+		return this->realValue;
+	}
+	void setInt(int i) {
+		this->intValue = i;
+	}
+	void setDou(double d) {
+		this->realValue = d;
+	}
+	int getSize() {
+		return this->size;
+	}
+	void setSize(int s) {
+		this->size = s;
+	}
+	//数组设置为public的原因是对数组的操作比较复杂，如果都在private里面写的话会很多
+	vector<int> intA;//如果是数组，存储int数组
+	vector<double> douA;//如果是数组，存储数组的值
 
 private:
 	string name;
-	int type;
-	int intValue;
-	double realValue;
-	int level;
+	int type;//这个的赋值是通过value类来赋值的，value类里面设置了变量类型的信息
+	int intValue;//如果是int变量，这里存储int变量的具体值
+	double realValue;//如果是一个实数变量，这里存储实数变量的值
+	int level;//显示外层和内层
 	symbol *next;//next指向一个同名的外层变量
+	int size;//初始化时的size
 };
-//value和symbol是一一对应的
+
+//symbol只针对单个的符号而这个结构存储的是一个表
+class symbolArr {
+	//我们用list来代表符号表，分为普通的符号表和存储数组的符号表，具体的以后再说
+public:
+	list<symbol> table;
+	list<symbol> arrTable;//数组表的结构跟table是一样的，然后symbol中有存储数组的变量intA,douA
+	//需要有一个查找元素的操作,根据id的值返回对应的那个元素，下面这个是在符号表中查找
+	symbol* searchTa(string name, int level) {//把level看成是一个表示声明层次（或者说代码层次）的一个变量
+		for (list<symbol>::iterator it = table.begin(); it != table.end();it++) {
+			if (it->getName() == name && level == it->getLevel()) {
+				return &(*it);
+				break;
+			}
+			else {
+				return NULL;
+			}
+			
+		}
+
+	}
+	//这个是在数组记录里面查找,因为数组和普通变量可以有同一个名字，不会出错
+	symbol* searchArr(string name, int level) {
+		for (list<symbol>::iterator it = arrTable.begin(); it != arrTable.end(); it++) {
+			if (it->getName() == name && it->getLevel() == level) {
+				return &(*it);
+				break;
+			}
+			else {
+				return NULL;
+			}
+		}
+
+	}
+	
+
+
+};
+
 
 //定义树节点类型
 typedef enum {
@@ -134,7 +202,9 @@ typedef enum {
 	WHILENODE,
 	READNODE,
 	WRITENODE,
-	STMTBLOCK
+	STMTBLOCK,
+	OPNODE,
+	NEGATIVENODE    //负数
 }nodeType;
 
 //为了方便使用需要把enum转化成string
@@ -177,7 +247,7 @@ const string stokenType[]={
 
 	"LINE_NOTE",  //  //
 	"MULTI_NOTE",  //  /**/
-	"#"
+	"END"
 
 };
 string EToString(const tokenType eParam);
@@ -234,28 +304,25 @@ typedef enum {
 
 //本来想偷个懒的，但是还是逃不过画语法树
 struct treeNode {           //语法树节点
-	string content;           //非终结符用type，终结符用content
-	int type;               //这个type是用来做语义分析的，应该是一个枚举类型，先这么写吧，在这里注释一下你的tokentype可能要改一改
-	string tokenStr;        //以字符串形式表示的token,
-	int Line;               //所在行数
+	string tokenStr;//对于终结符而言，这个token是合理的，里面存的是token的type和具体的值，例如type=ID，content=a
+	nodeType NTtype;//对于非终结符而言，type是nodetype而不是tokentype
+	string VTcontent;
+	int Line;
 	int childNum;           //孩子数目
 	treeNode* children[MAXCHILDREN];//指向你的孩子
 	//为了便于将这些节点加入到分析栈中，需要一个构造函数
 	treeNode(string tokenS) {
-		tokenStr = tokenS;
+		tokenStr = tokenS;//这个tokenStr对于非终结符而言，就是非终结符的符号，对于终结符而言，是终结符的type
 		childNum = 0;
 		Line = line;
-
-		for (int i = 0; i < MAXCHILDREN; i++) {
-			//必须分配内存and构建对象，不然就是野指针
-			children[i] = NULL;
-		}
-
 	}
 	treeNode() {
 		//构造函数，不做任何
 		Line = line;
 		childNum = 0;
+	}
+	nodeType getType() {
+		return this->NTtype;
 	}
 
 };
@@ -272,6 +339,9 @@ void saveProductionSelect(map<int, set<string>> selectSet, ofstream &out);
 void savePredictionTable(map<string, map<string, string>> predictionTable, ofstream &out);
 void saveTokenRes(list<tokenInfo> resultTok, ofstream &out);
 void saveTree(const treeNode* head, ofstream &out);
+void convert2Num(string s, string type,value*va);
+tokenType str2Token(string s);
+int getPerior(tokenType a);
 
 extern ofstream token_ana;
 extern list<tokenInfo> resultTok;
