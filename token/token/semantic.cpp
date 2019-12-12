@@ -1,11 +1,13 @@
 #include "semantic.h"
 #include <sstream>
+//str2tok有问题
 //思路是遍历语法树，然后遇到对应的节点应该赋予对应的值，节点的类型在树节点创建完毕后可对其进行赋值
 #define MAXLENGTH  100
 static int level=0;//遍历的层数，变量的覆盖问题
 int el = 0;//在计算表达式时表达式的长度
-treeNode expre[MAXLENGTH];//存E下面的叶子节点
+vector<treeNode*> expre;//存E下面的叶子节点
 symbolArr ta;
+treeNode*x = new treeNode();
 void executePro(treeNode* s) {
 	//这个是对开始节点的操作
 	for (int i = 0; i < s->childNum; i++) {
@@ -16,9 +18,9 @@ void executePro(treeNode* s) {
 
 void executeStmt(treeNode* node) {
 	//这里有很多种不同的节点，根据节点类型的不同采取不同的操作
-	switch (node->NTtype) {
+ 	switch (node->NTtype) {
 	case DECLARENODE:
-		executeDeclar(node, level);
+ 		executeDeclar(node, level);
 		break;
 	case ASSIGNNODE:
 		executeAssign(node);
@@ -38,7 +40,12 @@ void executeStmt(treeNode* node) {
 	case STMTBLOCK:
 		executeStateB(node, level);
 		break;
+	default:
+		//如果是普通的节点，就遍历它的孩子
+		executePro(node);
 	}
+	
+
 }
 
 void executeDeclar(treeNode* node,int lev) {
@@ -60,19 +67,40 @@ void executeDeclar(treeNode* node,int lev) {
 	//V:= I D 这个if else是记录下来，如果赋值的话就要进行赋值
 	news.setName(node->children[1]->children[0]->children[0]->VTcontent);
 	//然后判断是不是数组
-	if (node->children[1]->children[1]->tokenStr == "$") {
+	if (node->children[1]->children[1]->children[0]->tokenStr == "$") {
 		//如果为普通变量，这里是不支持多个逗号这样声明的，所以每次声明只会有一个变量被放进去
-		ta.table.push_back(news);
-		//如果在声明时有赋值则进行赋值,即查看IN  IN->ASSIGN L L的发展只有两种可能，一种是E还有一种是数组的赋值这里就默认是E的这种赋值了
-		if (node->children[2]->tokenStr != "$") {
-			value* result = executeExpr(node->children[2]->children[1]->children[0]);
-
-			//此后还要进行类型相等与不等的区别对待，暂时不管
+		if (ta.searchTa(node->children[1]->children[0]->children[0]->VTcontent, level) == NULL) {
+			//在遇到declare节点时，会遇到重定义错误,现在的search函数的逻辑是如果在本level找不到的话
+			//就要去他的上一级找，所以如果要在一个新的level定义重复的变量，不能先去那边找
+			
+			//如果在声明时有赋值则进行赋值,即查看IN  IN->ASSIGN L L的发展只有两种可能，一种是E还有一种是数组的赋值这里就默认是E的这种赋值了
+			if (node->children[2]->children[0]->tokenStr != "$") {
+				value* result = executeExpr(node->children[2]->children[1]->children[0]);
+				//获得了值之后需要赋值,直接根据类型赋值，因为直接可以做强制类型转换所以对于他的double和int都进行赋值
+				if (news.getType() == news.INTTYPE) {
+					news.setInt(result->getIntValue());
+					news.setDou(result->getIntValue());
+				}
+				else {
+					news.setInt(result->getDouValue());
+					news.setDou(result->getDouValue());
+				}
+				
+			}
+			ta.table.push_back(news);
+		}
+		else {
+			cout << "you have defined one symbol for several times. in line " << node->Line << endl;
+			return;
 		}
 	}
 	else{
 		//是数组
 		//set size
+		if (ta.searchArr(node->children[1]->children[0]->children[0]->VTcontent, level) != NULL) {
+			cout << "you have defined one symbol for several times. in line " << node->Line << endl;
+			return;
+		}
 		if (node->children[1]->children[1]->children[1]->children[0]->children[0]->tokenStr == "INT_NUM") {
 			//数组大小必须是一个大于0整数
 			convert2Num(node->children[1]->children[1]->children[1]->children[0]->children[0]->VTcontent,"int", va);
@@ -81,12 +109,12 @@ void executeDeclar(treeNode* node,int lev) {
 			}
 			else {
 				cout << "the array size is wrong! in line " << node->Line;
-				abort();
+				return;
 			}
 		}
 		else {
 			cout << "the array size is wrong! in line " << node->Line;
-			abort();
+			return;
 		}
 		
 		ta.arrTable.push_back(news);//这里只存储变量类型和id,不存其他的东西。直接存到了arraytable里
@@ -115,14 +143,16 @@ void executeDeclar(treeNode* node,int lev) {
 						catch (exception e) {
 							//这里主要想解决的异常是i的值是int，如果定义了一个int数组但是赋值给的是float
 							cout <<"in line "<<tmp->Line<< " have exceptions:you may have errors with type convert."<<endl;
+							return;
 						}
 					}
 					while (tmp->children[2]->children[0]->tokenStr!="$") {
 						//到第二个表达式之后形式稳定了
 						if (news.intA.size() >= news.getSize()) {
 							//数组越界了，不可再初始化
-							cout << "array is out of bound" << endl;
-							abort();
+							cout << "array is out of bound in "<<tmp->Line << endl;
+							return;
+							
 						}
 						int i;
 						stringstream convert;
@@ -135,6 +165,7 @@ void executeDeclar(treeNode* node,int lev) {
 						catch (exception e) {
 							//这里主要想解决的异常是i的值是int，如果定义了一个int数组但是赋值给的是float
 							cout << "in line " << tmp->Line << " have exceptions:you may have errors with type convert." << endl;
+							return;
 						}
 					}
 			}
@@ -153,14 +184,15 @@ void executeDeclar(treeNode* node,int lev) {
 					catch (exception e) {
 						//这里主要想解决的异常是i的值是int，如果定义了一个int数组但是赋值给的是float
 						cout << "in line " << tmp->Line << " have exceptions:you may have errors with type convert." << endl;
+						return;
 					}
 				}
 				while (tmp->children[2]->children[0]->tokenStr != "$") {
 					//到第二个表达式之后形式稳定了
 					if (news.douA.size() >= news.getSize()) {
 						//数组越界了，不可再初始化
-						cout << "array is out of bound" << endl;
-						abort();
+						cout << "array is out of bound in "<<tmp->Line << endl;
+						return;
 					}
 					double i;
 					stringstream convert;
@@ -173,6 +205,7 @@ void executeDeclar(treeNode* node,int lev) {
 					catch (exception e) {
 						//这里主要想解决的异常是i的值是int，如果定义了一个double数组但是赋值给的是int
 						cout << "in line " << tmp->Line << " have exceptions:you may have errors with type convert." << endl;
+						return;
 					}
 				}
 			}
@@ -181,8 +214,9 @@ void executeDeclar(treeNode* node,int lev) {
 }
 
 void getLeaves(treeNode* node) {
-	if (node->childNum == 0) {//当遇到了叶子节点
-		expre[el].VTcontent = node->VTcontent;   //VTcontent就是具体的值对于ID来说就是a,apple之类的，如果是数字就是2,3.4之类具体的值,有一个缺点是所有的都当成string去存储了
+	if (node->childNum == 0&&node->tokenStr!="$") {//当遇到了叶子节点
+	 //其中VTcontent就是具体的值对于ID来说就是a,apple之类的，如果是数字就是2,3.4之类具体的值,有一个缺点是所有的都当成string去存储了
+		expre.push_back(node);
 		el++;//tokenstr就是终结符对应的type
 	}
 	int i = 0;
@@ -192,15 +226,21 @@ void getLeaves(treeNode* node) {
 	}
 	
 
-bool isOperator(treeNode node) {
+bool isOperator(treeNode* node) {
 	//判断读进来的数是不是操作符
-	if (node.tokenStr == "PLUS" || node.tokenStr == "MINUS" || node.tokenStr == "MUL" || node.tokenStr == "DIV" || node.tokenStr == "MOD"
-		|| node.tokenStr == "GRT" || node.tokenStr == "LES" || node.tokenStr == "GRT_EQU" || node.tokenStr == "LES_EQU" || node.tokenStr == "EQU" || node.tokenStr == "NOT_EQU") {
+	if (node->tokenStr == "PLUS" || node->tokenStr == "MINUS" || node->tokenStr == "MUL" || node->tokenStr == "DIV" || node->tokenStr == "MOD"
+		|| node->tokenStr == "GRT" || node->tokenStr == "LES" || node->tokenStr == "GRT_EQU" || node->tokenStr == "LES_EQU" || node->tokenStr == "EQU" || node->tokenStr == "NOT_EQU") {
 		return true;
+	}
+	else {
+		return false;
 	}
 }
 
 value* executeExpr(treeNode* node){
+	el = 0;
+	expre.clear();
+	getLeaves(node);
 	//这个函数的作用是计算表达式的值并进行赋值，表达式的值里面有普通表达式的值和布尔值的表达式，对应E和OE
 	value* va = new value();
 	value* tmp1, *tmp2;
@@ -224,80 +264,73 @@ value* executeExpr(treeNode* node){
 	//有两个栈，一个是操作符栈，一个是操作数栈
 	stack<value*> numbers;//对于变量要得到它的值，如果是数字的话就直接是一个数字
 	stack<tokenType> operators;
+
 	int i = 0;
-	for(i; i <= el+1; i++) {
-		treeNode x = expre[i];
-		if (i == el+1) {
-			//如果最后一个元素已经处理完了的情况
-			if (operators.empty()) {
-				//空的话返回true
-				va = numbers.top();
-				return va;
-			}
-			else {
-				tmp1 = numbers.top();
-				numbers.pop();
-				tmp2 = numbers.top();
-				numbers.pop();
-				op = operators.top();
-
-				operators.pop();
-				va = executeOp(op,tmp1,tmp2);
-				numbers.push(va);
-				if ( x.VTcontent== ")")//括号运算结束，弹出有括号，运算括号里面的内容
-				{
-					operators.pop();
-				}
-			}
-
-		}
-		else if (!isOperator(x)) {
+	for(i; i < el; i++) {
+		x = expre[i];
+		
+		if (!isOperator(x)) {
+			
 			//如果x不是一个操作符的话
 			value*tmp=new value();
-			if (x.tokenStr == "INT_NUM") {
+			if (x->tokenStr == "INT_NUM") {
 				tmp->setType(tmp->INTTYPE);
-				convert2Num(x.VTcontent, "int", tmp);
+				convert2Num(x->VTcontent, "int", tmp);
+				convert2Num(x->VTcontent, "double", tmp);
 				numbers.push(tmp);
 			}
-			else if (x.tokenStr == "REAL_NUM") {
+			else if (x->tokenStr == "REAL_NUM") {
 				tmp->setType(tmp->REALTYPE);
-				convert2Num(x.VTcontent, "double", tmp);
+				convert2Num(x->VTcontent, "double", tmp);
+				convert2Num(x->VTcontent, "int", tmp);
 				numbers.push(tmp);
-			}else if (x.tokenStr == "ID") {
+			}else if (x->tokenStr == "ID") {
+				
 				//如果是一个标识符的话,先要去查找符号表中有没有这个的定义，其中会产生相应的错误处理，然后正常的话要返回标识符对应的值
-				symbol* sym=ta.searchTa(x.VTcontent, level);
+				symbol* sym=ta.searchTa(x->VTcontent, level);
 				if (sym != NULL) {
 					if (sym->getType() == sym->INTTYPE) {
 						//是一个int值
 						tmp->setIntValue(sym->getIntV());
-
+						tmp->setDouValue(sym->getIntV());
 					}
 					else {
 						//是一个double值
 						tmp->setDouValue(sym->getDouV());
+						tmp->setIntValue(sym->getIntV());
 					}
 					numbers.push(tmp);
 				}
 				else {
 					//错误处理
+					cout << "in line "<<node->Line<<": expression error" << endl;
 				}
 			}
 			
 		}
 		else if (isOperator(x)) {//如果输入的是一个符号
+			
 			//如果栈是空的的话，直接push
 			if (operators.empty() == true) {
-				operators.push(str2Token(x.tokenStr));
+				operators.push(str2Token(x->tokenStr));
+				if (i==0) {
+					//表达式的第一个值就是一个符号，需要向数字栈中添加一个0
+					va->setIntValue(0);
+					va->setDouValue(0.0);
+					numbers.push(va);
+
+				}
 			}
 			else {
 				//栈内不空则比较优先级
-				if (getPerior(operators.top()) >= getPerior(str2Token(x.tokenStr))) {
+				if (getPerior(operators.top()) >= getPerior(str2Token(x->tokenStr))) {
 					//如果优先级相等或者top>进去
 					if (operators.top() == LEFT_BRA) {
 						//如果top是左括号的话，虽然优先级肯定比左括号低，但还是直接进去
-						operators.push(str2Token(x.tokenStr));
+						operators.push(str2Token(x->tokenStr));
 					}
 					else {
+						//需要处理的bug是就是负数直接是第一个咋处理
 						//普通情况，就要进行运算
 						tmp1 = numbers.top();
 						numbers.pop();
@@ -307,21 +340,53 @@ value* executeExpr(treeNode* node){
 						operators.pop();
 						va = executeOp(op,tmp1, tmp2);
 						numbers.push(va);
-						if (x.VTcontent == ")")//括号运算结束，弹出有括号，运算括号里面的内容
+						operators.push(str2Token(x->tokenStr));
+						if (x->VTcontent == ")")//括号运算结束，弹出有括号，运算括号里面的内容
 						{
 							operators.pop();//吧左括号搞出来
 						}
 					}
 
 				}
-				else if (getPerior(operators.top()) < getPerior(str2Token(x.tokenStr))) {
+				else if (getPerior(operators.top()) < getPerior(str2Token(x->tokenStr))) {
 					//进去大于top
-					operators.push(str2Token(x.tokenStr));
+					operators.push(str2Token(x->tokenStr));
 
 				}
 			}
 
 		}
+	}
+	//当把这个表达式循环完毕后
+	if (i == el) {
+		//如果最后一个元素已经处理完了的情况
+		while(operators.empty()==false) {
+			//空的话返回true
+			if (x->VTcontent != ""&& x->VTcontent == ")")//括号运算结束，弹出有括号，运算括号里面的内容
+			{
+				operators.pop();
+			}
+			else {
+				//对numbers栈的空处理
+				tmp2 = numbers.top();
+				numbers.pop();
+				tmp1 = numbers.top();
+				numbers.pop();
+				op = operators.top();
+
+				operators.pop();
+				va = executeOp(op, tmp1, tmp2);
+				numbers.push(va);
+
+			}
+
+
+			
+		}
+		va = numbers.top();
+		return va;
+		
+
 	}
 	return va;
 	
@@ -332,17 +397,32 @@ void executeAssign(treeNode* node) {
 	//AF->V AC  ; 
 	//AC:= ASSIGN L SEMI
 	//AC: = SEMI
-	symbol* tmpsym = executeValue(node, level);
-	//用trycatch handle异常
-	try {
+	if (node->children[0]->tokenStr == "ST") {
+		if (node->children[0]->children[0]->tokenStr == "PRINT") {
+			executeOut(node->children[0], level);
+		}
+		else if (node->children[0]->children[0]->tokenStr == "SCAN") {
+			executeIn(node->children[0], level);
+		}
+	}
+	else {
+		symbol* tmpsym = executeValue(node, level);
+		if (tmpsym == NULL) {
+			cout << "in line " << node->Line << ": the variable hasn't been defined." << endl;
+			return;
+		}
+
 		if (node->children[1]->children[0]->tokenStr == "ASSIGN") {
 			if (node->children[0]->children[1]->children[0]->tokenStr == "$") {
 				//对于普通变量而言
 				if (tmpsym->getType() == tmpsym->INTTYPE) {
+					//右边的值
 					tmpsym->setInt(executeExpr(node->children[1]->children[1])->getIntValue());//L节点
+					tmpsym->setDou(executeExpr(node->children[1]->children[1])->getIntValue());
 				}
 				else {
 					tmpsym->setDou(executeExpr(node->children[1]->children[1])->getDouValue());//L节点
+					tmpsym->setInt(executeExpr(node->children[1]->children[1])->getDouValue());
 				}
 			}
 			else {
@@ -356,15 +436,16 @@ void executeAssign(treeNode* node) {
 				F:= N
 				F:= $
 				*/
-				//获取要索引的值
+				//获取要索引的值如果索引不是一个整数
 				if (executeExpr(node->children[0]->children[1]->children[1])->getType() != 0) {
 					cout << "line " << node->Line << ": wrong index" << endl;
-					abort();
+					return;
 				}
 				else {
 					index = executeExpr(node->children[0]->children[1]->children[1])->getIntValue();
 					if (index >= tmpsym->getSize()) {
 						cout << "illegal access to the array. in line " << node->Line << endl;
+						return;
 					}
 				}
 				//如果是一个int数组
@@ -373,16 +454,16 @@ void executeAssign(treeNode* node) {
 
 				}
 				else {
-					tmpsym->douA[index]=executeExpr(node->children[1]->children[1])->getDouValue();//L节点
+					tmpsym->douA[index] = executeExpr(node->children[1]->children[1])->getDouValue();//L节点
 				}
-				
+
 			}
 		}
 		//如果不是assign的话就是简单的声明，不做任何处理
+
+
 	}
-	catch (exception e) {
-		cout << "in line " << node->Line << ": the variable hasn't been defined." << endl;
-	}
+	
 
 	 
 
@@ -390,7 +471,7 @@ void executeAssign(treeNode* node) {
 
 //根据栈计算表达式的值
 value* executeOp(tokenType opera, value* op1, value*  op2){
-	value *va = new value();
+	value *va=new value();
 	int type;
 	//确定最后计算结果的类型，有一个为double则最后结果为double
 	if (op1->getType() == 1 || op2->getType() == 1) {
@@ -404,18 +485,16 @@ value* executeOp(tokenType opera, value* op1, value*  op2){
 	//对两个操作符进行运算
 	switch (opera) {
 	case PLUS:
-		try {
 			if (type == 0) {//int
 				va->setIntValue(op1->getIntValue() + op2->getIntValue());
+				va->setDouValue(op1->getIntValue() + op2->getIntValue());
 			}
 			else {
 				//如果都不是整数则全部转换为double类型
 				va->setDouValue(op1->getDouValue() + op2->getDouValue());
+				va->setIntValue(op1->getDouValue() + op2->getDouValue());
 			}
-		}
-		catch (exception e) {
-			cout << "you may have problems about casting." << endl;
-		}
+		
 		break;
 	case MINUS:
 		if (type == 0) {//int
@@ -438,7 +517,7 @@ value* executeOp(tokenType opera, value* op1, value*  op2){
 	case DIV:
 		//检查除零错误
 		if (op2->getDouValue() == 0.0||op2->getIntValue()==0) {
-			cout << "除数不能为0" << endl;
+			cout << "you can't divide 0" << endl;
 		}
 		if (type == 0) {
 			va->setIntValue(op1->getIntValue() / op2->getIntValue());
@@ -459,7 +538,7 @@ value* executeOp(tokenType opera, value* op1, value*  op2){
 			va->setIntValue(op1->getIntValue() - op1->getIntValue() / op2->getIntValue()*op2->getIntValue());
 		}
 	case GRT:
-		if (op1->getDouValue() > op2->getDouValue()) {//以double值为准，进行比较,有个问题，你的double，，要是一开始就是int呢，，，
+		if (op1->getDouValue() > op2->getDouValue() || (op1->getIntValue() > op2->getIntValue())) {//以double值为准，进行比较,有个问题，你的double，，要是一开始就是int呢，，，
 			va->setType(va->TRUETYPE);//error 这里有一点小问题，见上一行
 		}
 		else {
@@ -467,7 +546,7 @@ value* executeOp(tokenType opera, value* op1, value*  op2){
 		}
 		break;
 	case LES:
-		if (op1->getDouValue() < op2->getDouValue()) {
+		if (op1->getDouValue() < op2->getDouValue() || (op1->getIntValue() < op2->getIntValue())) {
 			va->setType(va->TRUETYPE);
 		}
 		else {
@@ -475,7 +554,7 @@ value* executeOp(tokenType opera, value* op1, value*  op2){
 		}
 		break;
 	case EQU:
-		if (op1->getDouValue() == op2->getDouValue()) {
+		if (op1->getDouValue() == op2->getDouValue() || (op1->getIntValue() == op2->getIntValue())) {
 			va->setType(va->TRUETYPE);
 		}
 		else {
@@ -483,7 +562,7 @@ value* executeOp(tokenType opera, value* op1, value*  op2){
 		}
 		break;
 	case NOT_EQU:
-		if (op1->getDouValue() != op2->getDouValue()) {
+		if (op1->getDouValue() != op2->getDouValue() || (op1->getIntValue() != op2->getIntValue())) {
 			va->setType(va->TRUETYPE);
 		}
 		else {
@@ -491,7 +570,7 @@ value* executeOp(tokenType opera, value* op1, value*  op2){
 		}
 		break;
 	case GRT_EQU:
-		if (op1->getDouValue() >= op2->getDouValue()) {
+		if ((op1->getDouValue() >= op2->getDouValue())||(op1->getIntValue()>=op2->getIntValue())) {
 			va->setType(va->TRUETYPE);
 		}
 		else {
@@ -499,7 +578,7 @@ value* executeOp(tokenType opera, value* op1, value*  op2){
 		}
 		break;
 	case LES_EQU:
-		if (op1->getDouValue() <= op2->getDouValue()) {
+		if (op1->getDouValue() <= op2->getDouValue() || (op1->getIntValue() <= op2->getIntValue())) {
 			va->setType(va->TRUETYPE);
 		}
 		else {
@@ -523,7 +602,7 @@ void executeIf(treeNode* node) {
 	value* res = executeOp(str2Token(node->children[1]->children[1]->children[1]->children[0]->VTcontent), con1, con2);
 	//true和非0值使条件为真,运行CF
 	if (res->getType() == res->TRUETYPE) {
-		executeStateB(node->children[1]->children[3]->children[2]->children[1], level);//CF
+		(node->children[1]->children[3]->children[2]->children[1], level);//CF
 	}
 	else {
 		if (node->children[1]->children[4]->children[0]->tokenStr!="$") {
@@ -543,26 +622,32 @@ void executeWhile(treeNode* node, int lev) {
 	value*res = executeOp(str2Token(node->children[1]->children[1]->children[1]->children[0]->VTcontent), con1, con2);
 	while (res->getType() == res->TRUETYPE ) {
 		executeStateB(node->children[1]->children[3]->children[1], level);
-	
-		
+ 		con1 = executeExpr(node->children[1]->children[1]->children[0]);
+	    con2 = executeExpr(node->children[1]->children[1]->children[2]);
+	    res = executeOp(str2Token(node->children[1]->children[1]->children[1]->children[0]->VTcontent), con1, con2);
 	}
-	
-
-	
 }
 void executeIn(treeNode* node, int lev) {
 
 }
 void executeOut(treeNode* node, int lev) {
-
+//ST: = PRINT LEFT_BRA E RIGHT_BRA SEMI
+	if (node->children[2]->children[1]->children[0]->tokenStr == "$") {
+	//不是数组
+		symbol *tmp = ta.searchTa(node->children[2]->children[0]->children[0]->VTcontent, lev);
+		if (tmp != NULL) {
+			cout << tmp->getIntV();
+		}
+	}
 }
 void executeStateB(treeNode* node, int lev) {
 	//这个函数的作用是考虑覆盖情况
 	level++;//层数递增
 	for (int i = 0; i < node->childNum;i++) {
-			executeStmt(node);
+			executeStmt(node->children[i]); 
 		
 	}
+	level--;
 	
 }
 
@@ -576,12 +661,13 @@ void executeStateB(treeNode* node, int lev) {
 	AC : = SEMI
 	*/
 symbol* executeValue(treeNode* node, int level) {//注意在树上是不设置value节点的，
-	symbol* tmp;
+	symbol* tmp=NULL;
 	//AF->V AC
 	//AC:= ASSIGN L SEMI
 	//AC: = SEMI
 	//不管最后是否赋值，value的工作只是针对变量查找并返回
-		if ((node->children[0]->children[1]->children[0]->tokenStr == "$"))
+	
+	 if ((node->children[0]->children[1]->children[0]->tokenStr == "$"))
 		{
 			//D为空所以是给普通变量赋值并且是赋值操作，不是简单的再次声明一下
 			tmp = ta.searchTa(node->children[0]->children[0]->children[0]->VTcontent, level);

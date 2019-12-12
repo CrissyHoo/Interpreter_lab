@@ -55,7 +55,7 @@ map<int, set<string>> selectSet;//存所有的select集合
 map<string, map<string, string>> predictionTable;//LL1的那个表，预测分析表
 fstream parseFile("parse.txt");//存放语法分析结果文件
 ofstream setFile("setFile.txt");//存放LL1分析表和各种集合表
-
+treeNode*st;
 
 
 stack<treeNode*> anaStack;
@@ -288,7 +288,7 @@ void getFollowSet() {
 //求select集
 //求所有产生式的select集合
 void getSelectSet() {
-	int i, j;
+	int i;
 
 	for (i = 0; i < productionSum; i++) {
 		//对于A->a
@@ -337,6 +337,32 @@ void getPredictTable() {
 	savePredictionTable(predictionTable, setFile);
 }
 
+void allocateType(treeNode* node) {
+	//对输入的节点进行赋予类型的操作，为后面语义分析做准备
+	//其实这里用switch再合适不过了，但是，，，，你没有用tokentype，算了算了
+	if (node->tokenStr == "CF") {
+		node->NTtype = STMTBLOCK;
+	}
+	else if (node->tokenStr == "Q") {
+		node->NTtype = DECLARENODE;
+	}
+	else if (node->tokenStr == "AF") {
+		node->NTtype = ASSIGNNODE;
+	}
+	else if (node->tokenStr == "C") {
+		node->NTtype = IFNODE;
+	}
+	else if (node->tokenStr == "WL") {
+		node->NTtype = WHILENODE;
+	}
+	else if (node->tokenStr == "PRINT") {
+		node->NTtype = WRITENODE;
+	}
+	else if (node->tokenStr == "SCAN") {
+		node->NTtype = READNODE;
+	}
+}
+
 //使用预测分析表进行语法分析
 void analyse() {
 
@@ -356,18 +382,15 @@ void analyse() {
 
 
 	anaStack.push(new treeNode("END"));//#
-	treeNode* st =new treeNode(startToken);
+	st =new treeNode(startToken);
 	st->childNum = 1;
+	
 	st->tokenStr = "S";
 	anaStack.push(st);//首符号进栈
 	
 	treeNode* ttop = new treeNode();
 	ttop = st;
 	
-	
-	
-
-
 	//注意栈里面装的是一个一个的树节点，然后我自己定义的是指向树节点的指针
 	for (int i = 0;; i++) {
 
@@ -394,15 +417,19 @@ void analyse() {
 				int count = usedProductionRight.size();
 				ttop = anaStack.top();
 				ttop->childNum = count;
-				int j = 0;
+				ttop->Line = remainTok.top().Line;
+				int j = usedProductionRight.size();
+				//每次弹出的时候给相应的非终结符附上节点类型的值
+				allocateType(ttop);
+
 				//分析栈弹出并且将产生式右部进栈
 				anaStack.pop();
 				//这个循环是为了进栈
 				for (auto ite = usedProductionRight.rbegin(); ite != usedProductionRight.rend(); ite++) {
 					treeNode*tmp = new treeNode(*ite);
 					
-					ttop->children[j] = tmp;
-					j++;
+					ttop->children[j-1] = tmp;
+					j--;
 					if (tmp->tokenStr != "$") {
 
 						anaStack.push(tmp);

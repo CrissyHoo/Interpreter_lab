@@ -1,51 +1,4 @@
-1 // PART SIX: comprehensive analysis
-line comment:/
-
-2    // here are some code adapted from C which is completely lexically legal.
-line comment:/
-
-3    // piece one
-line comment:/
-
-4 
-
-5    int a[3];
-Reserved Word: int
-Identifier: a
-Bound Symbol: [
-integer:3
-Bound Symbol: ]
-Bound Symbol: ;
-
-6    a = 234;
-Identifier: a
-Operator: =
-integer:234
-Bound Symbol: ;
-
-7    b = sdf_234df;
-Identifier: b
-Operator: =
-Identifier: sdf_234df
-Bound Symbol: ;
-
-8 
-
-9    // piece two
-line comment:/
-
-10        // int a = 3<>5;
-line comment:/
-
-11         float b=-23;
-Reserved Word: float
-Identifier: b
-Operator: =
-Operator: -
-integer:23
-Bound Symbol: ;
-
-12 	int a[3] = { 1,3,4,8 };
+1    int a[3] = {1,3,4};
 Reserved Word: int
 Identifier: a
 Bound Symbol: [
@@ -58,152 +11,113 @@ Bound Symbol: ,
 integer:3
 Bound Symbol: ,
 integer:4
-Bound Symbol: ,
-integer:8
 Bound Symbol: }
 Bound Symbol: ;
 
-13         if( a>b){ a        ;
-Reserved Word: if
+2    int i=2+3;
+Reserved Word: int
+Identifier: i
+Operator: =
+integer:2
+Operator: +
+integer:3
+Bound Symbol: ;
+
+3    int sum=0;
+Reserved Word: int
+Identifier: sum
+Operator: =
+integer:0
+Bound Symbol: ;
+
+4    int b=2;
+Reserved Word: int
+Identifier: b
+Operator: =
+integer:2
+Bound Symbol: ;
+
+5    while(i>=0){//hflashdf
+Reserved Word: while
 Bound Symbol: (
-Identifier: a
-Operator: >b
+Identifier: i
+Operator: >=
+integer:0
 Bound Symbol: )
 Bound Symbol: {
-Identifier: a
+line comment:/
+
+6    /*sgfiuadsh
+multipul lines comment:/
+
+7    fdli*/
+multipul lines comment:
+
+8    sum=sum+i*i;
+Identifier: sum
+Operator: =
+Identifier: sum
+Operator: +
+Identifier: i
+Operator: *
+Identifier: i
 Bound Symbol: ;
 
-14         }
+9    i=i-1;   
+Identifier: i
+Operator: =
+Identifier: i
+Operator: -
+integer:1
+Bound Symbol: ;
+
+10    }
 Bound Symbol: }
 
-15         else{
-Reserved Word: else
-Bound Symbol: {
+11    print(sum);
+Unknown Token:print
+Bound Symbol: (
+Identifier: sum
+Bound Symbol: )
+Bound Symbol: ;
 
-16           xx=236 * 1+ 345/(23 * 34) - 2346/ (31- 31) ;
+12    int xx=236;
+Reserved Word: int
 Identifier: xx
 Operator: =
 integer:236
-Operator: *
-integer:1
-Operator: +
-integer:345
-Operator: /
+Bound Symbol: ;
+
+13    if(2==3){
+Reserved Word: if
 Bound Symbol: (
-integer:23
-Operator: *
-integer:34
-Bound Symbol: )
-Operator: -
-integer:2346
-Operator: /
-Bound Symbol: (
-integer:31
-Operator: -
-integer:31
-Bound Symbol: )
-Bound Symbol: ;
-
-17           }
-Bound Symbol: }
-
-18 		  
-
-19 
-
-20    // piece three
-line comment:/
-
-21    
-
-22         int a ;float b =0.234;
-Reserved Word: int
-Identifier: a
-Bound Symbol: ;
-Reserved Word: float
-Identifier: b
-Operator: =
-real number:0.234
-Bound Symbol: ;
-
-23 	
-
-24 		a_b_c_d_e____1= 0126.120;
-Identifier: a_b_c_d_e____1
-Operator: =
-real number:0126.120
-Bound Symbol: ;
-
-25         while (a >+234){
-Reserved Word: while
-Bound Symbol: (
-Identifier: a
-Operator: >+
-integer:234
-Bound Symbol: )
-Bound Symbol: {
-
-26               b = b - 1 - a;
-Identifier: b
-Operator: =
-Identifier: b
-Operator: -
-integer:1
-Operator: -
-Identifier: a
-Bound Symbol: ;
-
-27               while( b==a )
-Reserved Word: while
-Bound Symbol: (
-Identifier: b
+integer:2
 Operator: ==
-Identifier: a
+integer:3
 Bound Symbol: )
-
-28 		{
 Bound Symbol: {
 
-29                     float c = 123;
-Reserved Word: float
-Identifier: c
-Operator: =
-integer:123
-Bound Symbol: ;
-
-30                     b=2343; 
+14     print(b);
+Unknown Token:print
+Bound Symbol: (
 Identifier: b
-Operator: =
-integer:2343
+Bound Symbol: )
 Bound Symbol: ;
 
-31 		
+15    }else{
+Bound Symbol: }
+Reserved Word: else
+Bound Symbol: {
 
-32                     b = 
-Identifier: b
-Operator: =
-
-33 		- 14.1238675;
-Operator: -
-real number:14.1238675
+16     int avc;
+Reserved Word: int
+Identifier: avc
 Bound Symbol: ;
 
-34                     
-
-35              }
+17    }
 Bound Symbol: }
 
-36 			 }
-Bound Symbol: }
+18 		
 
-37        
-
-38    
-
-39 
-
-40 /* you should pass all the test case before you start expr1 checking !! */
-multipul lines comment:/
-
-41 
+19 		 
 

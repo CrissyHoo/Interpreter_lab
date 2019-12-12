@@ -1,6 +1,6 @@
 #include "token.h"
 #include "lex.h"
-
+#include "semantic.h"
 int line;
 errorNode *herr=new errorNode();
 
@@ -50,6 +50,8 @@ int main() {
 		getSelectSet();
 		getPredictTable();
 		analyse();
+		//因为在语法分析中如果有错误就会直接中断，所以不需要设置分支
+		executePro(st);
 
 
 	}

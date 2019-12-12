@@ -52,7 +52,10 @@ typedef enum {
 
 	LINE_NOTE,  //  //
 	MULTI_NOTE,  //  /**/
-	END
+	END,
+
+	SCAN,//in
+	PRINT//out
 
 }tokenType;
 
@@ -163,29 +166,46 @@ public:
 	list<symbol> arrTable;//数组表的结构跟table是一样的，然后symbol中有存储数组的变量intA,douA
 	//需要有一个查找元素的操作,根据id的值返回对应的那个元素，下面这个是在符号表中查找
 	symbol* searchTa(string name, int level) {//把level看成是一个表示声明层次（或者说代码层次）的一个变量
-		for (list<symbol>::iterator it = table.begin(); it != table.end();it++) {
-			if (it->getName() == name && level == it->getLevel()) {
-				return &(*it);
-				break;
-			}
-			else {
-				return NULL;
-			}
-			
-		}
+		symbol*tmp = NULL;
+		int t = level;
+		while (level >= 0) {
+			for (list<symbol>::iterator it = table.begin(); it != table.end(); it++) {
 
+				if (it->getName() == name && level == it->getLevel()) {
+					return &(*it);
+
+				}
+				else {
+					tmp = NULL;
+				}
+
+			}
+			tmp = NULL;
+			level--;
+		}
+		level = t;
+		return tmp;
 	}
 	//这个是在数组记录里面查找,因为数组和普通变量可以有同一个名字，不会出错
 	symbol* searchArr(string name, int level) {
-		for (list<symbol>::iterator it = arrTable.begin(); it != arrTable.end(); it++) {
-			if (it->getName() == name && it->getLevel() == level) {
-				return &(*it);
-				break;
+		symbol*tmp=NULL;
+		int t = level;
+		while (level >= 0) {
+			for (list<symbol>::iterator it = arrTable.begin(); it != arrTable.end(); it++) {
+				if (it->getName() == name && it->getLevel() == level) {
+					return &(*it);
+				}
+				else {
+					tmp = NULL;
+				}
 			}
-			else {
-				return NULL;
+			if (arrTable.size() == 0) {
+				tmp = NULL;
 			}
+			level--;
 		}
+		level = t;//恢复原来的值
+		return tmp;
 
 	}
 	
@@ -203,8 +223,7 @@ typedef enum {
 	READNODE,
 	WRITENODE,
 	STMTBLOCK,
-	OPNODE,
-	NEGATIVENODE    //负数
+	OPNODE
 }nodeType;
 
 //为了方便使用需要把enum转化成string
@@ -247,7 +266,9 @@ const string stokenType[]={
 
 	"LINE_NOTE",  //  //
 	"MULTI_NOTE",  //  /**/
-	"END"
+	"END",
+	"SCAN",//in
+	"PRINT"//out
 
 };
 string EToString(const tokenType eParam);
@@ -315,15 +336,15 @@ struct treeNode {           //语法树节点
 		tokenStr = tokenS;//这个tokenStr对于非终结符而言，就是非终结符的符号，对于终结符而言，是终结符的type
 		childNum = 0;
 		Line = line;
+		VTcontent = "";
 	}
 	treeNode() {
 		//构造函数，不做任何
 		Line = line;
 		childNum = 0;
+		VTcontent = "";
 	}
-	nodeType getType() {
-		return this->NTtype;
-	}
+	
 
 };
 
@@ -345,7 +366,6 @@ int getPerior(tokenType a);
 
 extern ofstream token_ana;
 extern list<tokenInfo> resultTok;
-
 extern stateType state;
 extern bool hasError;
 extern list<errorNode> err;

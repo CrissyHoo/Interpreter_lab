@@ -232,42 +232,45 @@ string EToString(const tokenType eParam)
 
 tokenType str2Token(string s) {
 	//由于只需要符号的，所以只写一个符号的
-	if (s == "PLUS") {
-		return PLUS;
+	try {
+		if (s == "PLUS") {
+			return PLUS;
+		}
+		else if (s == "MINUS") {
+			return MINUS;
+		}
+		else if (s == "MUL") {
+			return MUL;
+		}
+		else if (s == "DIV") {
+			return DIV;
+		}
+		else if (s == "MOD") {
+			return MOD;
+		}
+		else if (s == ">") {
+			return GRT;
+		}
+		else if (s == ">=")
+		{
+			return GRT_EQU;
+		}
+		else if (s == "<") {
+			return LES;
+		}
+		else if (s == "<=") {
+			return LES_EQU;
+		}
+		else if (s == "==") {
+			return EQU;
+		}
+		else if (s == "<>") {
+			return NOT_EQU;
+		}
 	}
-	else if (s == "MINUS") {
-		return MINUS;
-	}
-	else if (s == "MUL") {
-		return MUL;
-	}
-	else if (s == "DIV") {
-		return DIV;
-	}
-	else if (s == "MOD") {
-		return MOD;
-	}
-	else if (s == "GRT") {
-		return GRT;
-	}
-	else if(s=="GRT_EQU")
-	{
-		return GRT_EQU;
-	}
-	else if (s == "LES") {
-		return LES;
-	}
-	else if (s == "LES_EQU") {
-		return LES_EQU;
-	}
-	else if (s == "EQU") {
-		return EQU;
-	}
-	else if (s == "NOT_EQU") {
-		return NOT_EQU;
-	}
-	else {
+	catch(exception e) {
 		cout << "error:the expression may have mistakes." << endl;
+		
 	}
 }
 

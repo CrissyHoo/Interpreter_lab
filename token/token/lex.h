@@ -20,4 +20,5 @@ void getSelectSet();
 void analyse();
 
 extern int top;
-extern treeNode *treeStack[MAXTREENODE];
+extern string startToken;
+extern treeNode* st ;

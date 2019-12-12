@@ -7,11 +7,8 @@ list<errorNode> err;//这是一个存储错误信息的list
 errorNode errt;
 bool hasError;
 list<tokenInfo> resultTok; //讲分析结果存储在一个list中，便于语法分析使用
-
 tokenInfo tmp ;
 ofstream token_ana("token.txt");
-
-
 
 //判断是不是字母
 bool isLetter(char c) {
@@ -24,7 +21,6 @@ bool isLetter(char c) {
 		return false;
 	}
 }
-
 
 //判断是不是数字
 bool isDigit(char c) 
@@ -43,23 +39,23 @@ static struct //保留字结构体，用于输出
 {
 	const char *str;
 	tokenType tok;
-} reservedWords[5] = {
+} reservedWords[7] = {
 	{"if", IF},
 	{"else", ELSE},
-
 	{"while",WHILE},
 	{"int",INT},
-	{"float",REAL}
+	{"double",REAL},
+	{"scan",SCAN},
+	{"print",PRINT}
 };
 
 static tokenType reservedLookup(char *s)
 {
-	for (int i = 0; i < 5; i++)
+	for (int i = 0; i < 7; i++)
 		if (!strcmp(s, reservedWords[i].str))
 			return reservedWords[i].tok;
 	return ID;
 }
-
 
 static stateType stateSave = START; //保存DFA状态
 stateType state = stateSave;        //DFA状态
@@ -197,11 +193,8 @@ void getToken(string ss) {
 				if (!isdigit(c))
 				{
 					//如果该行最后一位不是数字,例如 23.
-					if (c == '.') {
-						
-						
+					if (c == '.') {		
 							state = INREAL0;
-						
 					}
 					else {
 						ssIndex--;
@@ -320,6 +313,8 @@ void getToken(string ss) {
 					currentToken = NOT_EQU;
 				}
 				else {
+					save = false;
+					ssIndex--;
 					state = DONE;
 					currentToken = LES;
 				}
@@ -327,11 +322,14 @@ void getToken(string ss) {
 			case INGRT:
 				if (c == '=') {
 					state=DONE;
+					
 					currentToken = GRT_EQU;
 
 				}
 				else {
+					save = false;
 					state = DONE;
+					ssIndex--;
 					currentToken = GRT;
 				}
 				break;

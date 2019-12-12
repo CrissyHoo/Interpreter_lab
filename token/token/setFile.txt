@@ -1,124 +1,86 @@
 ————————————————————————词法分析结果如下——————————————————————————
-5 5 int
-5 9 a
-5 24 [
-5 7 3
-5 25 ]
-5 30 ;
-6 9 a
-6 15 =
-6 7 234
-6 30 ;
-7 9 b
-7 15 =
-7 9 sdf_234df
-7 30 ;
-11 6 float
-11 9 b
-11 15 =
-11 11 -
-11 7 23
+1 5 int
+1 9 a
+1 24 [
+1 7 3
+1 25 ]
+1 15 =
+1 26 {
+1 7 1
+1 29 ,
+1 7 3
+1 29 ,
+1 7 4
+1 27 }
+1 30 ;
+2 5 int
+2 9 i
+2 15 =
+2 7 2
+2 10 +
+2 7 3
+2 30 ;
+3 5 int
+3 9 sum
+3 15 =
+3 7 0
+3 30 ;
+4 5 int
+4 9 b
+4 15 =
+4 7 2
+4 30 ;
+5 4 while
+5 22 (
+5 9 i
+5 19 >=
+5 7 0
+5 23 )
+5 26 {
+8 9 sum
+8 15 =
+8 9 sum
+8 10 +
+8 9 i
+8 12 *
+8 9 i
+8 30 ;
+9 9 i
+9 15 =
+9 9 i
+9 11 -
+9 7 1
+9 30 ;
+10 27 }
+11 37 print
+11 22 (
+11 9 sum
+11 23 )
 11 30 ;
 12 5 int
-12 9 a
-12 24 [
-12 7 3
-12 25 ]
+12 9 xx
 12 15 =
-12 26 {
-12 7 1
-12 29 ,
-12 7 3
-12 29 ,
-12 7 4
-12 29 ,
-12 7 8
-12 27 }
+12 7 236
 12 30 ;
 13 2 if
 13 22 (
-13 9 a
-13 18 >b
+13 7 2
+13 21 ==
+13 7 3
 13 23 )
 13 26 {
-13 9 a
-13 30 ;
-14 27 }
+14 37 print
+14 22 (
+14 9 b
+14 23 )
+14 30 ;
+15 27 }
 15 3 else
 15 26 {
-16 9 xx
-16 15 =
-16 7 236
-16 12 *
-16 7 1
-16 10 +
-16 7 345
-16 13 /
-16 22 (
-16 7 23
-16 12 *
-16 7 34
-16 23 )
-16 11 -
-16 7 2346
-16 13 /
-16 22 (
-16 7 31
-16 11 -
-16 7 31
-16 23 )
+16 5 int
+16 9 avc
 16 30 ;
 17 27 }
-22 5 int
-22 9 a
-22 30 ;
-22 6 float
-22 9 b
-22 15 =
-22 8 0.234
-22 30 ;
-24 9 a_b_c_d_e____1
-24 15 =
-24 8 0126.120
-24 30 ;
-25 4 while
-25 22 (
-25 9 a
-25 18 >+
-25 7 234
-25 23 )
-25 26 {
-26 9 b
-26 15 =
-26 9 b
-26 11 -
-26 7 1
-26 11 -
-26 9 a
-26 30 ;
-27 4 while
-27 22 (
-27 9 b
-27 21 ==
-27 9 a
-27 23 )
-28 26 {
-29 6 float
-29 9 c
-29 15 =
-29 7 123
-29 30 ;
-30 9 b
-30 15 =
-30 7 2343
-30 30 ;
-32 9 b
-32 15 =
-33 11 -
-33 8 14.1238675
-33 30 ;
-35 27 }
-36 27 }
 
 
 
@@ -180,24 +142,24 @@ MOD
 MUL
 NOT_EQU
 PLUS
+PRINT
 REAL
 REAL_NUM
 RIGHT_BOUND
 RIGHT_BRA
 RIGHT_INDEX
+SCAN
 SEMI
 WHILE
-print
-scan
 
 
 
 ————————————————————————文法符号的first集如下————————————————————————
 $ --- {$}
 AC --- {ASSIGN,SEMI}
-AF --- {ID,print,scan}
+AF --- {ID,PRINT,SCAN}
 ASSIGN --- {ASSIGN}
-BB --- {$,ID,IF,WHILE,print,scan}
+BB --- {$,ID,IF,PRINT,SCAN,WHILE}
 C --- {IF}
 CB --- {LEFT_BRA}
 CF --- {LEFT_BOUND}
@@ -237,6 +199,7 @@ NOT_EQU --- {NOT_EQU}
 O --- {EQU,GRT,GRT_EQU,LES,LES_EQU,NOT_EQU}
 OE --- {DIV,EQU,GRT,GRT_EQU,ID,INT_NUM,LEFT_BRA,LES,LES_EQU,MINUS,MOD,MUL,NOT_EQU,PLUS,REAL_NUM}
 PLUS --- {PLUS}
+PRINT --- {PRINT}
 Q --- {INT,REAL}
 QB --- {INT,REAL}
 QBB --- {$,INT,REAL}
@@ -245,21 +208,20 @@ REAL_NUM --- {REAL_NUM}
 RIGHT_BOUND --- {RIGHT_BOUND}
 RIGHT_BRA --- {RIGHT_BRA}
 RIGHT_INDEX --- {RIGHT_INDEX}
-S --- {$,ID,IF,INT,REAL,WHILE,print,scan}
+S --- {$,ID,IF,INT,PRINT,REAL,SCAN,WHILE}
+SCAN --- {SCAN}
 SEMI --- {SEMI}
-ST --- {print,scan}
+ST --- {PRINT,SCAN}
 T --- {INT,REAL}
 V --- {ID}
 WHILE --- {WHILE}
 WL --- {WHILE}
 WLB --- {LEFT_BRA}
-print --- {print}
-scan --- {scan}
 
 
 
 ————————————————————————文法产生式的first集如下————————————————————————
-S:= QBB BB --- {$,ID,IF,INT,REAL,WHILE,print,scan}
+S:= QBB BB --- {$,ID,IF,INT,PRINT,REAL,SCAN,WHILE}
 QBB:= QB QBB --- {INT,REAL}
 QBB:= $ --- {$}
 QB:= Q SEMI --- {INT,REAL}
@@ -284,13 +246,13 @@ L:= LEFT_BOUND MN RIGHT_BOUND --- {LEFT_BOUND}
 MN:= N NB --- {INT_NUM,REAL_NUM}
 NB:= COMMA N NB --- {COMMA}
 NB:= $ --- {$}
-BB:= AF S --- {ID,print,scan}
+BB:= AF S --- {ID,PRINT,SCAN}
 BB:= WL S --- {WHILE}
 BB:= C S --- {IF}
 BB:= $ --- {$}
-AF:= ST AC --- {print,scan}
-ST:= scan --- {scan}
-ST:= print --- {print}
+AF:= ST --- {PRINT,SCAN}
+ST:= SCAN LEFT_BRA V RIGHT_BRA SEMI --- {SCAN}
+ST:= PRINT LEFT_BRA V RIGHT_BRA SEMI --- {PRINT}
 AF:= V AC --- {ID}
 AC:= ASSIGN L SEMI --- {ASSIGN}
 AC:= SEMI --- {SEMI}
@@ -320,15 +282,15 @@ EL:= $ --- {$}
 
 
 ————————————————————————非终结符的follow集如下————————————————————————
-AC --- {END,ID,IF,INT,REAL,RIGHT_BOUND,WHILE,print,scan}
-AF --- {END,ID,IF,INT,REAL,RIGHT_BOUND,WHILE,print,scan}
+AC --- {END,ID,IF,INT,PRINT,REAL,RIGHT_BOUND,SCAN,WHILE}
+AF --- {END,ID,IF,INT,PRINT,REAL,RIGHT_BOUND,SCAN,WHILE}
 BB --- {END,RIGHT_BOUND}
-C --- {END,ID,IF,INT,REAL,RIGHT_BOUND,WHILE,print,scan}
-CB --- {END,ID,IF,INT,REAL,RIGHT_BOUND,WHILE,print,scan}
-CF --- {ELSE,END,ID,IF,INT,REAL,RIGHT_BOUND,WHILE,print,scan}
+C --- {END,ID,IF,INT,PRINT,REAL,RIGHT_BOUND,SCAN,WHILE}
+CB --- {END,ID,IF,INT,PRINT,REAL,RIGHT_BOUND,SCAN,WHILE}
+CF --- {ELSE,END,ID,IF,INT,PRINT,REAL,RIGHT_BOUND,SCAN,WHILE}
 D --- {ASSIGN,DIV,EQU,GRT,GRT_EQU,LES,LES_EQU,MINUS,MOD,MUL,NOT_EQU,PLUS,RIGHT_BRA,RIGHT_INDEX,SEMI}
 E --- {EQU,GRT,GRT_EQU,LES,LES_EQU,NOT_EQU,RIGHT_BRA,SEMI}
-EL --- {END,ID,IF,INT,REAL,RIGHT_BOUND,WHILE,print,scan}
+EL --- {END,ID,IF,INT,PRINT,REAL,RIGHT_BOUND,SCAN,WHILE}
 F --- {DIV,EQU,GRT,GRT_EQU,LES,LES_EQU,MINUS,MOD,MUL,NOT_EQU,PLUS,RIGHT_BRA,RIGHT_INDEX,SEMI}
 FR --- {EQU,GRT,GRT_EQU,LES,LES_EQU,MINUS,NOT_EQU,PLUS,RIGHT_BRA,SEMI}
 I --- {ASSIGN,DIV,EQU,GRT,GRT_EQU,LEFT_INDEX,LES,LES_EQU,MINUS,MOD,MUL,NOT_EQU,PLUS,RIGHT_BRA,RIGHT_INDEX,SEMI}
@@ -342,21 +304,21 @@ NB --- {RIGHT_BOUND}
 O --- {DIV,ID,INT_NUM,LEFT_BRA,MINUS,MOD,MUL,PLUS,REAL_NUM,RIGHT_BRA}
 OE --- {RIGHT_BRA}
 Q --- {SEMI}
-QB --- {END,ID,IF,INT,REAL,RIGHT_BOUND,WHILE,print,scan}
-QBB --- {END,ID,IF,RIGHT_BOUND,WHILE,print,scan}
+QB --- {END,ID,IF,INT,PRINT,REAL,RIGHT_BOUND,SCAN,WHILE}
+QBB --- {END,ID,IF,PRINT,RIGHT_BOUND,SCAN,WHILE}
 S --- {END,RIGHT_BOUND}
-ST --- {ASSIGN,SEMI}
+ST --- {END,ID,IF,INT,PRINT,REAL,RIGHT_BOUND,SCAN,WHILE}
 T --- {ID}
 V --- {ASSIGN,DIV,EQU,GRT,GRT_EQU,LES,LES_EQU,MINUS,MOD,MUL,NOT_EQU,PLUS,RIGHT_BRA,RIGHT_INDEX,SEMI}
-WL --- {END,ID,IF,INT,REAL,RIGHT_BOUND,WHILE,print,scan}
-WLB --- {END,ID,IF,INT,REAL,RIGHT_BOUND,WHILE,print,scan}
+WL --- {END,ID,IF,INT,PRINT,REAL,RIGHT_BOUND,SCAN,WHILE}
+WLB --- {END,ID,IF,INT,PRINT,REAL,RIGHT_BOUND,SCAN,WHILE}
 
 
 
 ————————————————————————产生式的select集如下————————————————————————
-S:= QBB BB --- {END,ID,IF,INT,REAL,RIGHT_BOUND,WHILE,print,scan}
+S:= QBB BB --- {END,ID,IF,INT,PRINT,REAL,RIGHT_BOUND,SCAN,WHILE}
 QBB:= QB QBB --- {INT,REAL}
-QBB:= $ --- {END,ID,IF,RIGHT_BOUND,WHILE,print,scan}
+QBB:= $ --- {END,ID,IF,PRINT,RIGHT_BOUND,SCAN,WHILE}
 QB:= Q SEMI --- {INT,REAL}
 Q:= T V IN --- {INT,REAL}
 IN:= ASSIGN L --- {ASSIGN}
@@ -379,13 +341,13 @@ L:= LEFT_BOUND MN RIGHT_BOUND --- {LEFT_BOUND}
 MN:= N NB --- {INT_NUM,REAL_NUM}
 NB:= COMMA N NB --- {COMMA}
 NB:= $ --- {RIGHT_BOUND}
-BB:= AF S --- {ID,print,scan}
+BB:= AF S --- {ID,PRINT,SCAN}
 BB:= WL S --- {WHILE}
 BB:= C S --- {IF}
 BB:= $ --- {END,RIGHT_BOUND}
-AF:= ST AC --- {print,scan}
-ST:= scan --- {scan}
-ST:= print --- {print}
+AF:= ST --- {PRINT,SCAN}
+ST:= SCAN LEFT_BRA V RIGHT_BRA SEMI --- {SCAN}
+ST:= PRINT LEFT_BRA V RIGHT_BRA SEMI --- {PRINT}
 AF:= V AC --- {ID}
 AC:= ASSIGN L SEMI --- {ASSIGN}
 AC:= SEMI --- {SEMI}
@@ -410,7 +372,7 @@ WLB:= LEFT_BRA OE RIGHT_BRA CF --- {LEFT_BRA}
 C:= IF CB --- {IF}
 CB:= LEFT_BRA OE RIGHT_BRA CF EL --- {LEFT_BRA}
 EL:= ELSE CF --- {ELSE}
-EL:= $ --- {END,ID,IF,INT,REAL,RIGHT_BOUND,WHILE,print,scan}
+EL:= $ --- {END,ID,IF,INT,PRINT,REAL,RIGHT_BOUND,SCAN,WHILE}
 
 
 
@@ -418,15 +380,15 @@ EL:= $ --- {END,ID,IF,INT,REAL,RIGHT_BOUND,WHILE,print,scan}
 AC 遇到了 ASSIGN,采用产生式:AC:= ASSIGN L SEMI
 AC 遇到了 SEMI,采用产生式:AC:= SEMI
 AF 遇到了 ID,采用产生式:AF:= V AC
-AF 遇到了 print,采用产生式:AF:= ST AC
-AF 遇到了 scan,采用产生式:AF:= ST AC
+AF 遇到了 PRINT,采用产生式:AF:= ST
+AF 遇到了 SCAN,采用产生式:AF:= ST
 BB 遇到了 END,采用产生式:BB:= $
 BB 遇到了 ID,采用产生式:BB:= AF S
 BB 遇到了 IF,采用产生式:BB:= C S
+BB 遇到了 PRINT,采用产生式:BB:= AF S
 BB 遇到了 RIGHT_BOUND,采用产生式:BB:= $
+BB 遇到了 SCAN,采用产生式:BB:= AF S
 BB 遇到了 WHILE,采用产生式:BB:= WL S
-BB 遇到了 print,采用产生式:BB:= AF S
-BB 遇到了 scan,采用产生式:BB:= AF S
 C 遇到了 IF,采用产生式:C:= IF CB
 CB 遇到了 LEFT_BRA,采用产生式:CB:= LEFT_BRA OE RIGHT_BRA CF EL
 CF 遇到了 LEFT_BOUND,采用产生式:CF:= LEFT_BOUND S RIGHT_BOUND
@@ -468,11 +430,11 @@ EL 遇到了 END,采用产生式:EL:= $
 EL 遇到了 ID,采用产生式:EL:= $
 EL 遇到了 IF,采用产生式:EL:= $
 EL 遇到了 INT,采用产生式:EL:= $
+EL 遇到了 PRINT,采用产生式:EL:= $
 EL 遇到了 REAL,采用产生式:EL:= $
 EL 遇到了 RIGHT_BOUND,采用产生式:EL:= $
+EL 遇到了 SCAN,采用产生式:EL:= $
 EL 遇到了 WHILE,采用产生式:EL:= $
-EL 遇到了 print,采用产生式:EL:= $
-EL 遇到了 scan,采用产生式:EL:= $
 F 遇到了 DIV,采用产生式:F:= $
 F 遇到了 EQU,采用产生式:F:= $
 F 遇到了 GRT,采用产生式:F:= $
@@ -580,22 +542,22 @@ QBB 遇到了 END,采用产生式:QBB:= $
 QBB 遇到了 ID,采用产生式:QBB:= $
 QBB 遇到了 IF,采用产生式:QBB:= $
 QBB 遇到了 INT,采用产生式:QBB:= QB QBB
+QBB 遇到了 PRINT,采用产生式:QBB:= $
 QBB 遇到了 REAL,采用产生式:QBB:= QB QBB
 QBB 遇到了 RIGHT_BOUND,采用产生式:QBB:= $
+QBB 遇到了 SCAN,采用产生式:QBB:= $
 QBB 遇到了 WHILE,采用产生式:QBB:= $
-QBB 遇到了 print,采用产生式:QBB:= $
-QBB 遇到了 scan,采用产生式:QBB:= $
 S 遇到了 END,采用产生式:S:= QBB BB
 S 遇到了 ID,采用产生式:S:= QBB BB
 S 遇到了 IF,采用产生式:S:= QBB BB
 S 遇到了 INT,采用产生式:S:= QBB BB
+S 遇到了 PRINT,采用产生式:S:= QBB BB
 S 遇到了 REAL,采用产生式:S:= QBB BB
 S 遇到了 RIGHT_BOUND,采用产生式:S:= QBB BB
+S 遇到了 SCAN,采用产生式:S:= QBB BB
 S 遇到了 WHILE,采用产生式:S:= QBB BB
-S 遇到了 print,采用产生式:S:= QBB BB
-S 遇到了 scan,采用产生式:S:= QBB BB
-ST 遇到了 print,采用产生式:ST:= print
-ST 遇到了 scan,采用产生式:ST:= scan
+ST 遇到了 PRINT,采用产生式:ST:= PRINT LEFT_BRA V RIGHT_BRA SEMI
+ST 遇到了 SCAN,采用产生式:ST:= SCAN LEFT_BRA V RIGHT_BRA SEMI
 T 遇到了 INT,采用产生式:T:= INT
 T 遇到了 REAL,采用产生式:T:= REAL
 V 遇到了 ID,采用产生式:V:= I D
@@ -605,552 +567,351 @@ WLB 遇到了 LEFT_BRA,采用产生式:WLB:= LEFT_BRA OE RIGHT_BRA CF
 
 
 树
-S:BB树
-BB:S树
-S:BB树
-BB:S树
-S:BB树
-BB:S树
-S:BB树
-BB:S树
-S:BB树
-BB:S树
-S:BB树
-BB:$树
 S:QBB树
-QBB:$树
-BB:WL树
-WL:WLB树
-WLB:CF树
-CF:RIGHT_BOUND树
-CF:S树
-S:BB树
-BB:S树
-S:BB树
-BB:S树
-S:BB树
-BB:$树
-S:QBB树
-QBB:$树
-BB:WL树
-WL:WLB树
-WLB:CF树
-CF:RIGHT_BOUND树
-CF:S树
-S:BB树
-BB:S树
-S:BB树
-BB:S树
-S:BB树
-BB:$树
-S:QBB树
-QBB:$树
-BB:AF树
-AF:AC树
-AC:SEMI树
-AC:L树
-L:E树
-E:M树
-M:M树
-M:$树
-M:IT树
-IT:FR树
-FR:$树
-IT:F树
-F:N树
-N:REAL_NUM树
-M:MINUS树
-E:IT树
-IT:FR树
-FR:$树
-IT:F树
-F:$树
-AC:ASSIGN树
-AF:V树
-V:D树
-D:$树
+QBB:QB树
+QB:Q树
+Q:T树
+T:INT树
+Q:V树
 V:I树
 I:ID树
-S:QBB树
-QBB:$树
-BB:AF树
-AF:AC树
-AC:SEMI树
-AC:L树
-L:E树
-E:M树
-M:$树
-E:IT树
-IT:FR树
-FR:$树
-IT:F树
+V:D树
+D:LEFT_INDEX树
+D:F树
 F:N树
 N:INT_NUM树
-AC:ASSIGN树
-AF:V树
-V:D树
-D:$树
+D:RIGHT_INDEX树
+Q:IN树
+IN:ASSIGN树
+IN:L树
+L:LEFT_BOUND树
+L:MN树
+MN:N树
+N:INT_NUM树
+MN:NB树
+NB:COMMA树
+NB:N树
+N:INT_NUM树
+NB:NB树
+NB:COMMA树
+NB:N树
+N:INT_NUM树
+NB:NB树
+NB:$树
+L:RIGHT_BOUND树
+QB:SEMI树
+QBB:QBB树
+QBB:QB树
+QB:Q树
+Q:T树
+T:INT树
+Q:V树
 V:I树
 I:ID树
-S:QBB树
-QBB:QBB树
-QBB:$树
-QBB:QB树
-QB:SEMI树
-QB:Q树
+V:D树
+D:$树
 Q:IN树
+IN:ASSIGN树
 IN:L树
 L:E树
-E:M树
-M:$树
 E:IT树
-IT:FR树
-FR:$树
 IT:F树
 F:N树
 N:INT_NUM树
-IN:ASSIGN树
-Q:V树
-V:D树
-D:$树
-V:I树
-I:ID树
-Q:T树
-T:REAL树
-CF:LEFT_BOUND树
-WLB:RIGHT_BRA树
-WLB:OE树
-OE:E树
-E:M树
-M:$树
-E:IT树
 IT:FR树
 FR:$树
+E:M树
+M:PLUS树
+M:IT树
 IT:F树
-F:V树
-V:D树
-D:$树
+F:N树
+N:INT_NUM树
+IT:FR树
+FR:$树
+M:M树
+M:$树
+QB:SEMI树
+QBB:QBB树
+QBB:QB树
+QB:Q树
+Q:T树
+T:INT树
+Q:V树
 V:I树
 I:ID树
+V:D树
+D:$树
+Q:IN树
+IN:ASSIGN树
+IN:L树
+L:E树
+E:IT树
+IT:F树
+F:N树
+N:INT_NUM树
+IT:FR树
+FR:$树
+E:M树
+M:$树
+QB:SEMI树
+QBB:QBB树
+QBB:QB树
+QB:Q树
+Q:T树
+T:INT树
+Q:V树
+V:I树
+I:ID树
+V:D树
+D:$树
+Q:IN树
+IN:ASSIGN树
+IN:L树
+L:E树
+E:IT树
+IT:F树
+F:N树
+N:INT_NUM树
+IT:FR树
+FR:$树
+E:M树
+M:$树
+QB:SEMI树
+QBB:QBB树
+QBB:$树
+S:BB树
+BB:WL树
+WL:WHILE树
+WL:WLB树
+WLB:LEFT_BRA树
+WLB:OE树
+OE:E树
+E:IT树
+IT:F树
+F:V树
+V:I树
+I:ID树
+V:D树
+D:$树
+IT:FR树
+FR:$树
+E:M树
+M:$树
+OE:O树
+O:GRT_EQU树
+OE:E树
+E:IT树
+IT:F树
+F:N树
+N:INT_NUM树
+IT:FR树
+FR:$树
+E:M树
+M:$树
+WLB:RIGHT_BRA树
+WLB:CF树
+CF:LEFT_BOUND树
+CF:S树
+S:QBB树
+QBB:$树
+S:BB树
+BB:AF树
+AF:V树
+V:I树
+I:ID树
+V:D树
+D:$树
+AF:AC树
+AC:ASSIGN树
+AC:L树
+L:E树
+E:IT树
+IT:F树
+F:V树
+V:I树
+I:ID树
+V:D树
+D:$树
+IT:FR树
+FR:$树
+E:M树
+M:PLUS树
+M:IT树
+IT:F树
+F:V树
+V:I树
+I:ID树
+V:D树
+D:$树
+IT:FR树
+FR:MUL树
+FR:F树
+F:V树
+V:I树
+I:ID树
+V:D树
+D:$树
+FR:FR树
+FR:$树
+M:M树
+M:$树
+AC:SEMI树
+BB:S树
+S:QBB树
+QBB:$树
+S:BB树
+BB:AF树
+AF:V树
+V:I树
+I:ID树
+V:D树
+D:$树
+AF:AC树
+AC:ASSIGN树
+AC:L树
+L:E树
+E:IT树
+IT:F树
+F:V树
+V:I树
+I:ID树
+V:D树
+D:$树
+IT:FR树
+FR:$树
+E:M树
+M:MINUS树
+M:IT树
+IT:F树
+F:N树
+N:INT_NUM树
+IT:FR树
+FR:$树
+M:M树
+M:$树
+AC:SEMI树
+BB:S树
+S:QBB树
+QBB:$树
+S:BB树
+BB:$树
+CF:RIGHT_BOUND树
+BB:S树
+S:QBB树
+QBB:$树
+S:BB树
+BB:AF树
+AF:ST树
+ST:PRINT树
+ST:LEFT_BRA树
+ST:V树
+V:I树
+I:ID树
+V:D树
+D:$树
+ST:RIGHT_BRA树
+ST:SEMI树
+BB:S树
+S:QBB树
+QBB:QB树
+QB:Q树
+Q:T树
+T:INT树
+Q:V树
+V:I树
+I:ID树
+V:D树
+D:$树
+Q:IN树
+IN:ASSIGN树
+IN:L树
+L:E树
+E:IT树
+IT:F树
+F:N树
+N:INT_NUM树
+IT:FR树
+FR:$树
+E:M树
+M:$树
+QB:SEMI树
+QBB:QBB树
+QBB:$树
+S:BB树
+BB:C树
+C:IF树
+C:CB树
+CB:LEFT_BRA树
+CB:OE树
+OE:E树
+E:IT树
+IT:F树
+F:N树
+N:INT_NUM树
+IT:FR树
+FR:$树
+E:M树
+M:$树
 OE:O树
 O:EQU树
 OE:E树
+E:IT树
+IT:F树
+F:N树
+N:INT_NUM树
+IT:FR树
+FR:$树
 E:M树
 M:$树
-E:IT树
-IT:FR树
-FR:$树
-IT:F树
-F:V树
-V:D树
-D:$树
-V:I树
-I:ID树
-WLB:LEFT_BRA树
-WL:WHILE树
-S:QBB树
-QBB:$树
-BB:AF树
-AF:AC树
-AC:SEMI树
-AC:L树
-L:E树
-E:M树
-M:M树
-M:M树
-M:$树
-M:IT树
-IT:FR树
-FR:$树
-IT:F树
-F:V树
-V:D树
-D:$树
-V:I树
-I:ID树
-M:MINUS树
-M:IT树
-IT:FR树
-FR:$树
-IT:F树
-F:N树
-N:INT_NUM树
-M:MINUS树
-E:IT树
-IT:FR树
-FR:$树
-IT:F树
-F:V树
-V:D树
-D:$树
-V:I树
-I:ID树
-AC:ASSIGN树
-AF:V树
-V:D树
-D:$树
-V:I树
-I:ID树
-S:QBB树
-QBB:$树
-CF:LEFT_BOUND树
-WLB:RIGHT_BRA树
-WLB:OE树
-OE:E树
-E:M树
-M:$树
-E:IT树
-IT:FR树
-FR:$树
-IT:F树
-F:N树
-N:INT_NUM树
-OE:O树
-O:GRT树
-OE:E树
-E:M树
-M:$树
-E:IT树
-IT:FR树
-FR:$树
-IT:F树
-F:V树
-V:D树
-D:$树
-V:I树
-I:ID树
-WLB:LEFT_BRA树
-WL:WHILE树
-S:QBB树
-QBB:$树
-BB:AF树
-AF:AC树
-AC:SEMI树
-AC:L树
-L:E树
-E:M树
-M:$树
-E:IT树
-IT:FR树
-FR:$树
-IT:F树
-F:N树
-N:REAL_NUM树
-AC:ASSIGN树
-AF:V树
-V:D树
-D:$树
-V:I树
-I:ID树
-S:QBB树
-QBB:QBB树
-QBB:QBB树
-QBB:$树
-QBB:QB树
-QB:SEMI树
-QB:Q树
-Q:IN树
-IN:L树
-L:E树
-E:M树
-M:$树
-E:IT树
-IT:FR树
-FR:$树
-IT:F树
-F:N树
-N:REAL_NUM树
-IN:ASSIGN树
-Q:V树
-V:D树
-D:$树
-V:I树
-I:ID树
-Q:T树
-T:REAL树
-QBB:QB树
-QB:SEMI树
-QB:Q树
-Q:IN树
-IN:$树
-Q:V树
-V:D树
-D:$树
-V:I树
-I:ID树
-Q:T树
-T:INT树
-BB:C树
-C:CB树
-CB:EL树
-EL:CF树
-CF:RIGHT_BOUND树
-CF:S树
-S:BB树
-BB:S树
-S:BB树
-BB:$树
-S:QBB树
-QBB:$树
-BB:AF树
-AF:AC树
-AC:SEMI树
-AC:L树
-L:E树
-E:M树
-M:M树
-M:M树
-M:$树
-M:IT树
-IT:FR树
-FR:FR树
-FR:$树
-FR:F树
-F:RIGHT_BRA树
-F:E树
-E:M树
-M:M树
-M:$树
-M:IT树
-IT:FR树
-FR:$树
-IT:F树
-F:N树
-N:INT_NUM树
-M:MINUS树
-E:IT树
-IT:FR树
-FR:$树
-IT:F树
-F:N树
-N:INT_NUM树
-F:LEFT_BRA树
-FR:DIV树
-IT:F树
-F:N树
-N:INT_NUM树
-M:MINUS树
-M:IT树
-IT:FR树
-FR:FR树
-FR:$树
-FR:F树
-F:RIGHT_BRA树
-F:E树
-E:M树
-M:$树
-E:IT树
-IT:FR树
-FR:FR树
-FR:$树
-FR:F树
-F:N树
-N:INT_NUM树
-FR:MUL树
-IT:F树
-F:N树
-N:INT_NUM树
-F:LEFT_BRA树
-FR:DIV树
-IT:F树
-F:N树
-N:INT_NUM树
-M:PLUS树
-E:IT树
-IT:FR树
-FR:FR树
-FR:$树
-FR:F树
-F:N树
-N:INT_NUM树
-FR:MUL树
-IT:F树
-F:N树
-N:INT_NUM树
-AC:ASSIGN树
-AF:V树
-V:D树
-D:$树
-V:I树
-I:ID树
-S:QBB树
-QBB:$树
-CF:LEFT_BOUND树
-EL:ELSE树
-CB:CF树
-CF:RIGHT_BOUND树
-CF:S树
-S:BB树
-BB:S树
-S:BB树
-BB:$树
-S:QBB树
-QBB:$树
-BB:AF树
-AF:AC树
-AC:SEMI树
-AF:V树
-V:D树
-D:$树
-V:I树
-I:ID树
-S:QBB树
-QBB:$树
-CF:LEFT_BOUND树
 CB:RIGHT_BRA树
-CB:OE树
-OE:E树
-E:M树
-M:$树
-E:IT树
-IT:FR树
-FR:$树
-IT:F树
-F:$树
-OE:O树
-O:GRT树
-OE:E树
-E:M树
-M:$树
-E:IT树
-IT:FR树
-FR:$树
-IT:F树
-F:V树
+CB:CF树
+CF:LEFT_BOUND树
+CF:S树
+S:QBB树
+QBB:$树
+S:BB树
+BB:AF树
+AF:ST树
+ST:PRINT树
+ST:LEFT_BRA树
+ST:V树
+V:I树
+I:ID树
 V:D树
 D:$树
-V:I树
-I:ID树
-CB:LEFT_BRA树
-C:IF树
+ST:RIGHT_BRA树
+ST:SEMI树
+BB:S树
 S:QBB树
-QBB:QBB树
-QBB:QBB树
 QBB:$树
+S:BB树
+BB:$树
+CF:RIGHT_BOUND树
+CB:EL树
+EL:ELSE树
+EL:CF树
+CF:LEFT_BOUND树
+CF:S树
+S:QBB树
 QBB:QB树
-QB:SEMI树
 QB:Q树
-Q:IN树
-IN:L树
-L:RIGHT_BOUND树
-L:MN树
-MN:NB树
-NB:NB树
-NB:NB树
-NB:NB树
-NB:$树
-NB:N树
-N:INT_NUM树
-NB:COMMA树
-NB:N树
-N:INT_NUM树
-NB:COMMA树
-NB:N树
-N:INT_NUM树
-NB:COMMA树
-MN:N树
-N:INT_NUM树
-L:LEFT_BOUND树
-IN:ASSIGN树
-Q:V树
-V:D树
-D:RIGHT_INDEX树
-D:F树
-F:N树
-N:INT_NUM树
-D:LEFT_INDEX树
-V:I树
-I:ID树
 Q:T树
 T:INT树
-QBB:QB树
-QB:SEMI树
-QB:Q树
-Q:IN树
-IN:L树
-L:E树
-E:M树
-M:M树
-M:$树
-M:IT树
-IT:FR树
-FR:$树
-IT:F树
-F:N树
-N:INT_NUM树
-M:MINUS树
-E:IT树
-IT:FR树
-FR:$树
-IT:F树
-F:$树
-IN:ASSIGN树
 Q:V树
-V:D树
-D:$树
 V:I树
 I:ID树
-Q:T树
-T:REAL树
-BB:AF树
-AF:AC树
-AC:SEMI树
-AC:L树
-L:E树
-E:M树
-M:$树
-E:IT树
-IT:FR树
-FR:$树
-IT:F树
-F:V树
 V:D树
 D:$树
-V:I树
-I:ID树
-AC:ASSIGN树
-AF:V树
-V:D树
-D:$树
-V:I树
-I:ID树
-S:QBB树
-QBB:$树
-BB:AF树
-AF:AC树
-AC:SEMI树
-AC:L树
-L:E树
-E:M树
-M:$树
-E:IT树
-IT:FR树
-FR:$树
-IT:F树
-F:N树
-N:INT_NUM树
-AC:ASSIGN树
-AF:V树
-V:D树
-D:$树
-V:I树
-I:ID树
-S:QBB树
-QBB:QBB树
-QBB:$树
-QBB:QB树
-QB:SEMI树
-QB:Q树
 Q:IN树
 IN:$树
-Q:V树
-V:D树
-D:RIGHT_INDEX树
-D:F树
-F:N树
-N:INT_NUM树
-D:LEFT_INDEX树
-V:I树
-I:ID树
-Q:T树
-T:INT树
+QB:SEMI树
+QBB:QBB树
+QBB:$树
+S:BB树
+BB:$树
+CF:RIGHT_BOUND树
+BB:S树
+S:QBB树
+QBB:$树
+S:BB树
+BB:$树
